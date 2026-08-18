@@ -1,0 +1,34 @@
+سُرى — الصورة الرمزيّة لبوت التشغيل
+=====================================
+
+يُرسَل الناتج إلى @BotFather عبر /setuserpic.
+مربّع ٥١٢×٥١٢، PNG أو JPG. تيليقرام يقصّه دائرةً — فاترك
+هامشًا حول الشكل ولا تضع شيئًا مهمًّا في الزوايا.
+
+قيود الهويّة (docs/identity.md): بلا نصّ، بلا شعار مكتوب،
+بلا كثبانٍ ذهبيّة ولا نخيل ولا جِمال — لا فلكلور سياحيّ.
+اللون الدافئ الوحيد هو شعلة الفانوس؛ ما عداها بارد.
+
+
+البرومبت (انسخه كما هو):
+-------------------------------------------------------
+A single small oil lantern flame seen straight on, centred
+in a square 512x512 frame, warm amber #e0a33e core fading
+outward into a soft close glow, sitting on a deep cold
+near-black background #070d18 with a faint cool blue
+vignette at the edges, minimal and iconic like an app icon,
+flat and calm with no sparks and no rays, generous empty
+margin on all four sides so a circular crop never clips the
+flame, no lantern body, no hand, no text, no letters, no
+logo, no watermark, no gradient banding.
+-------------------------------------------------------
+
+
+البديل الذي لا يحتاج توليدًا
+-------------------------------------------------------
+قل لي «اقصص الشعلة» وأستخرجها برمجيًّا من
+public/brand/sura-logo-640.webp عبر sharp إلى مربّع
+٥١٢×٥١٢ بخلفيّة #070d18 وهامشٍ آمن للقصّ الدائريّ.
+هذا يضمن تطابقًا تامًّا مع شعار الموقع بدل شبهٍ قريب —
+وهو ما أرجّحه لأداةٍ داخليّة لا تحتاج فنًّا جديدًا.
+(أنا لا أولّد صورًا؛ هذا قصٌّ من أصلٍ تملكه.)

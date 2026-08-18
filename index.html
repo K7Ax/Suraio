@@ -1,0 +1,2371 @@
+<!DOCTYPE html>
+<!-- data-hero هو مفتاح الهيرو، وهو **السطر الواحد** الذي يُرجع المقطع:
+       story = المشهد المفصول ثماني طبقات، تسحبه يدُ الزائر بالتمرير (الافتراضي)
+       film  = مقطع Cloudinary كما كان بالضبط، بلا أي أثر باقٍ
+     تقرؤه النصّية المضمّنة أسفل الخلفية وتقرؤه main.js، فلا يوجد مكانان
+     يمكن أن يختلفا. -->
+<html lang="ar" dir="rtl" data-hero="story">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سُرى — تجربة ذهنية تفاعلية متكاملة</title>
+    <meta name="description" content="تأمل، تفكر، والعب ألعاب سُرى الذهنية اليومية باللغة العربية مع نشرة سُرى ولوحة فرسان سُرى.">
+    <!-- Brand mark. The tab icon is the fort alone: the full wordmark is a
+         2.3:1 lockup and turns to mush at 32px. -->
+    <link rel="icon" type="image/png" sizes="32x32" href="public/brand/icon-32.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="public/brand/icon-512.png">
+    <link rel="apple-touch-icon" href="public/brand/icon-180.png">
+    <meta name="theme-color" content="#0B1220">
+    <!-- Open Graph. The URLs here are ABSOLUTE on purpose and must stay that way:
+         the OG spec requires it, and WhatsApp/Twitter/Telegram simply drop a
+         relative og:image rather than resolving it against the page. `og:image`
+         was `public/brand/og-card.png` from launch until August 2026, so every
+         link shared in that window previewed with no picture at all.
+         The card is 1200×630 and 210 KB — inside WhatsApp's ~300 KB ceiling.
+         Canonical host is the APEX: both suraio.com and www.suraio.com are bound
+         to the same Pages project and each answers 200, so without this the two
+         compete as duplicates. -->
+    <link rel="canonical" href="https://suraio.com/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="سُرى">
+    <meta property="og:locale" content="ar_SA">
+    <meta property="og:url" content="https://suraio.com/">
+    <meta property="og:title" content="سُرى — تجربة ذهنية تفاعلية متكاملة">
+    <meta property="og:description" content="ألعاب سُرى الذهنية اليومية باللغة العربية.">
+    <meta property="og:image" content="https://suraio.com/public/brand/og-card.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="سُرى — ألعاب ذهنية يومية بالعربية">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="سُرى — تجربة ذهنية تفاعلية متكاملة">
+    <meta name="twitter:description" content="ألعاب سُرى الذهنية اليومية باللغة العربية.">
+    <meta name="twitter:image" content="https://suraio.com/public/brand/og-card.png">
+    <!-- Apply saved accessibility prefs before first paint (no flash).
+         Also pulls in the chosen ALTERNATE font family here rather than in the head
+         link below: Tajawal/Naskh are a preference almost nobody changes, so loading
+         all three families for everyone put 6 unused faces on the render-blocking
+         path. Only a visitor who actually picked one pays for it — and they pay
+         before first paint, so there is still no flash of the fallback. -->
+    <script>
+    (function(){try{var p=JSON.parse(localStorage.getItem('sura.pref')||'{}');var r=document.documentElement;var f=p.fontFamily||'reem';r.style.setProperty('--font-scale',String(p.fontScale||1));r.setAttribute('data-font',f);r.setAttribute('data-theme','dark');var H={tajawal:'https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap',naskh:'https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;700&display=swap'};if(H[f]){var l=document.createElement('link');l.rel='stylesheet';l.href=H[f];l.setAttribute('data-font-lazy',f);document.head.appendChild(l);}}catch(e){}})();
+    </script>
+    <!-- Google Fonts — Reem Kufi only; see the pre-paint script above for the rest -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Only the home state is on screen at load, so only it is worth preloading;
+         the other two arrive well before the first nav interaction. The misbaha
+         art is display:none under 768px, so the media query keeps phones from
+         fetching it at all (preload ignores CSS and would download regardless). -->
+    <link rel="preload" as="image" href="public/navbar/misbaha-home.webp" type="image/webp" media="(min-width: 768px)">
+    <!-- the logo is on screen inside the loader, i.e. it IS the first paint -->
+    <link rel="preload" as="image" href="public/brand/sura-logo-640.webp" type="image/webp">
+    <!-- Warm up the connection to the background-video CDN so the home clip starts sooner -->
+    <link rel="preconnect" href="https://res.cloudinary.com">
+    <!-- supabase-js is a third-party blocking dependency of app.js at the end of
+         <body>; without this its DNS+TLS handshake only starts once the parser
+         reaches that tag. Warming the origin here overlaps it with head parsing. -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <!-- app.js sits after supabase-js at the end of <body>, so the two used to
+         download one after the other: the parser could not even see app.js until
+         the CDN round-trip for supabase-js had finished. Preloading it here starts
+         that download during head parsing, in parallel with the CDN fetch, while
+         changing nothing about execution order — the <script> tags still run in
+         source order, which the navbar glue below them depends on.
+         `defer` would also parallelise, but it moves execution AFTER the inline
+         scripts that currently follow app.js. That is a behaviour change; this is
+         not. (v is rewritten by scripts/build/preflight.js — keep it in step.) -->
+    <link rel="preload" href="app.js?v=81892949" as="script">
+    <!-- Every auth check, leaderboard read and puzzle fetch goes to this origin,
+         and the first of them happens moments after app.js runs. Without this the
+         DNS lookup + TLS handshake are paid inside that first request, on the
+         critical path of the player seeing their own progress. Warming it here
+         overlaps the handshake with head parsing instead. -->
+    <link rel="preconnect" href="https://uqgndtsfrbgmgpqhuaeh.supabase.co" crossorigin>
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="style.css?v=08080744">
+</head>
+<body class="merged-page-body">
+    <!-- لا شاشة انتظار. حُذفت بقرار المالك (٨ أغسطس ٢٠٢٦): النسيج يُرسم في أول
+         إطار والمقطع يذوب فوقه متى وصل، فلم تكن الشاشة تنتظر شيئًا أصلًا —
+         كانت حجابًا ٣٢٠ms فوق صفحةٍ جاهزة. `data-booted` الذي كانت تُطلقه
+         يضعه initLoader فورًا في src/main.js. -->
+    <!-- Section videos crossfade; only the ACTIVE one decodes at a time (the rest
+         are paused) to keep playback smooth.
+         The HOME clip is the only one on screen at load, so it is the only first-paint
+         cost worth optimising: it ships in three Cloudinary widths and the browser picks
+         by viewport, so a phone downloads w_720 instead of the w_1920 desktop master.
+         The other two are LOCAL and uncompressed (14MB + 11MB), so preload="none" keeps
+         them off the wire entirely until their route is actually visited — "metadata"
+         still opened a connection and pulled the moov atom for both on every page load. -->
+    <div class="video-container" id="video-container">
+        <!-- النَّول — the procedural Sadu backdrop, and the first thing painted on
+             every route including this one. It is FIRST in the DOM and lowest in
+             the stack: the clip fades in over it when the network delivers it, so
+             the visitor never faces black while 14MB arrives. That is what lets
+             the home clip exist without the 2.8s boot screen it used to need.
+
+             The two other clips (games / newsletter) are gone — those routes are
+             Sadu now, and their 25MB of local files went with them. -->
+        <div class="loom-stage" id="loom" aria-hidden="true"></div>
+
+        <!-- المشهد ثماني طبقات — الهيرو حين data-hero="story".
+             هذه الكتلة كلّها **مولَّدة**: scripts/assets/story_assets.js يقيس صندوق
+             محتوى كل أصلٍ ويكتب public/story/_markup.html، وهو ما يُلصق هنا.
+             لا تُحرَّر بيد — ٣٢ رقم موضعٍ يُنسخ أحدها خطأً فتزيح طبقةٌ بلا أن
+             يشتكي شيء. عدّل PLACE في السكربت وأعد تشغيله.
+
+             وعنصران متداخلان لكل طبقة: الخارجي يملكه التمرير (y/x) والداخلي
+             يملكه الـparallax (xPercent/yPercent). قاعدة ONE OWNER PER
+             PROPERTY — انظر src/core/story.mjs.
+
+             والمصادر في data-* لا src: الزائر على اتصالٍ ضعيف أو موفّر بيانات
+             يجب ألّا يُحمّل الطبقات إطلاقًا، والمتصفّح يبدأ تحميل أي src في
+             الترميز قبل أن يُسأل أحد. النصّية المضمّنة تحته تختار المسار
+             وتُسند المصادر — وهي مضمّنة لا في app.js تحديدًا كي يبدأ التحميل
+             أثناء تحليل الصفحة لا بعده. -->
+        <div class="film-stage" id="film" data-win="4" aria-hidden="true">
+            <div class="film-frame" style="--r:1.7778;--ri:0.5625;--rp:0.5625;--rpi:1.7778">
+                <div class="film-layer" data-layer="stars" data-blend="screen"
+                     style="--ll:-1.992%;--lt:-2.014%;--lw:103.984%;--lh:104.028%;--pl:-2.014%;--pt:-1.992%;--pw:104.028%;--ph:103.984%">
+                    <picture>
+                        <source media="(orientation: portrait)"
+                                data-srcset="public/story/stars-p720.webp 749w, public/story/stars-p1440.webp 1498w">
+                        <img class="film-layer__img" alt="" decoding="async"
+                             data-src="public/story/stars-1280.webp"
+                             data-srcset="public/story/stars-1280.webp 1331w, public/story/stars-2560.webp 2662w">
+                    </picture>
+                </div>
+                <div class="film-layer" data-layer="milkyway" data-blend="screen"
+                     style="--ll:-1.992%;--lt:-2.014%;--lw:103.984%;--lh:104.028%;--pl:-2.014%;--pt:-1.992%;--pw:104.028%;--ph:103.984%">
+                    <picture>
+                        <source media="(orientation: portrait)"
+                                data-srcset="public/story/milkyway-p720.webp 749w, public/story/milkyway-p1440.webp 1498w">
+                        <img class="film-layer__img" alt="" decoding="async"
+                             data-src="public/story/milkyway-1280.webp"
+                             data-srcset="public/story/milkyway-1280.webp 1331w, public/story/milkyway-2560.webp 2662w">
+                    </picture>
+                </div>
+                <div class="film-layer" data-layer="moon" data-blend="screen"
+                     style="--ll:8.008%;--lt:5.972%;--lw:13.711%;--lh:14.514%;--pl:17.014%;--pt:8.516%;--pw:25.833%;--ph:8.672%">
+                    <picture>
+                        <source media="(orientation: portrait)"
+                                data-srcset="public/story/moon-p720.webp 186w, public/story/moon-p1440.webp 372w">
+                        <img class="film-layer__img" alt="" decoding="async"
+                             data-src="public/story/moon-1280.webp"
+                             data-srcset="public/story/moon-1280.webp 176w, public/story/moon-2560.webp 351w">
+                    </picture>
+                </div>
+                <div class="film-layer" data-layer="dunes-far"
+                     style="--ll:-2.500%;--lt:57.500%;--lw:105.000%;--lh:29.792%;--pl:-15.000%;--pt:54.492%;--pw:130.000%;--ph:11.680%">
+                    <picture>
+                        <source media="(orientation: portrait)"
+                                data-srcset="public/story/dunes-far-p720.webp 936w, public/story/dunes-far-p1440.webp 1872w">
+                        <img class="film-layer__img" alt="" decoding="async"
+                             data-src="public/story/dunes-far-1280.webp"
+                             data-srcset="public/story/dunes-far-1280.webp 1344w, public/story/dunes-far-2560.webp 2688w">
+                    </picture>
+                </div>
+                <div class="film-layer" data-layer="town"
+                     style="--ll:13.008%;--lt:57.500%;--lw:59.922%;--lh:5.972%;--pl:4.028%;--pt:58.008%;--pw:79.028%;--ph:2.500%">
+                    <picture>
+                        <source media="(orientation: portrait)"
+                                data-srcset="public/story/town-p720.webp 569w, public/story/town-p1440.webp 1138w">
+                        <img class="film-layer__img" alt="" decoding="async"
+                             data-src="public/story/town-1280.webp"
+                             data-srcset="public/story/town-1280.webp 767w, public/story/town-2560.webp 1534w">
+                    </picture>
+                </div>
+                <div class="film-layer" data-layer="dunes-mid"
+                     style="--ll:-3.984%;--lt:61.528%;--lw:108.008%;--lh:64.514%;--pl:-22.014%;--pt:58.516%;--pw:145.000%;--ph:27.383%">
+                    <picture>
+                        <source media="(orientation: portrait)"
+                                data-srcset="public/story/dunes-mid-p720.webp 1044w, public/story/dunes-mid-p1440.webp 2088w">
+                        <img class="film-layer__img" alt="" decoding="async"
+                             data-src="public/story/dunes-mid-1280.webp"
+                             data-srcset="public/story/dunes-mid-1280.webp 1383w, public/story/dunes-mid-2560.webp 2765w">
+                    </picture>
+                </div>
+                <div class="film-layer" data-layer="dune-near"
+                     style="--ll:-8.008%;--lt:71.528%;--lw:116.016%;--lh:74.931%;--pl:-37.014%;--pt:65.508%;--pw:175.000%;--ph:35.742%">
+                    <picture>
+                        <source media="(orientation: portrait)"
+                                data-srcset="public/story/dune-near-p720.webp 1260w, public/story/dune-near-p1440.webp 2520w">
+                        <img class="film-layer__img" alt="" decoding="async"
+                             data-src="public/story/dune-near-1280.webp"
+                             data-srcset="public/story/dune-near-1280.webp 1485w, public/story/dune-near-2560.webp 2970w">
+                    </picture>
+                </div>
+                <div class="film-layer" data-layer="traveller"
+                     style="--ll:62.773%;--lt:66.528%;--lw:5.430%;--lh:23.472%;--pl:74.097%;--pt:61.680%;--pw:9.861%;--ph:13.516%">
+                    <picture>
+                        <source media="(orientation: portrait)"
+                                data-srcset="public/story/traveller-p720.webp 71w, public/story/traveller-p1440.webp 142w">
+                        <img class="film-layer__img" alt="" decoding="async"
+                             data-src="public/story/traveller-1280.webp"
+                             data-srcset="public/story/traveller-1280.webp 70w, public/story/traveller-2560.webp 139w">
+                    </picture>
+                </div>
+            </div>
+            <!-- المسار الضعيف: المشهد مسطّحًا، صورةٌ واحدة (١٩KB عند 1280).
+                 لا تُحمَّل أبدًا على المسار الكامل. -->
+            <picture>
+                <source media="(orientation: portrait)"
+                        data-srcset="public/story/flat-p720.webp 720w, public/story/flat-p1440.webp 1440w">
+                <img class="film-flat" id="film-flat" alt="" decoding="async"
+                     data-src="public/story/flat-1280.webp"
+                     data-srcset="public/story/flat-1280.webp 1280w, public/story/flat-2560.webp 2560w">
+            </picture>
+            <!-- السطور هنا لا في #home: السبب في .film-captions بstyle.css. -->
+            <div class="film-captions">
+                <p class="film-caption" data-beat="sky">في الليلِ لا يبدأُ الطريقُ إلّا بخطوة</p>
+                <p class="film-caption" data-beat="horizon">والليلُ لا يُخفي المدى، بل يُظهرُه</p>
+                <p class="film-caption" data-beat="town">وهناك، ضوءٌ ينتظر</p>
+            </div>
+        </div>
+        <script>
+            // يعمل أثناء التحليل، قبل app.js بمئات الميلي‑ثانية.
+            (function () {
+                var r = document.documentElement;
+                if (r.getAttribute('data-hero') !== 'story') return;
+                var light = false;
+                try {
+                    var c = navigator.connection;
+                    light = !!(c && (c.saveData || /^(slow-2g|2g|3g)$/.test(c.effectiveType || '')))
+                        || matchMedia('(prefers-reduced-motion: reduce)').matches;
+                } catch (e) { }
+                // لا مدرجَ يفصل العنوان عن مطلع القصّة على أي جهاز (القصّة
+                // مقطعٌ يُعرض منذ ٨ أغسطس ٢٠٢٦)، فكان يظهر من أول إطار — أي أن
+                // الخاتمة تسبق الحكاية. يُحجَب هنا **قبل أول طلاء** لا في
+                // app.js، وإلا ظهر ثم قفز. يرفعه `rest()` في story.mjs عند
+                // بلوغ المشهد الأخير مهما كان سبب البلوغ.
+                // الشرط `!light` ضروري: تحت save-data أو حركةٍ أقلّ لا قصّةَ
+                // تُعرَض أصلًا، فحجبُ العنوان حينها إخفاءٌ بلا خاتمة تكشفه.
+                try {
+                    if (!light) {
+                        r.setAttribute('data-story', 'playing');
+                        // شبكة أمانٍ مستقلّة عن الحزمة: لو لم يقلع app.js قطّ
+                        // وصل العنوان على أي حال. سقفٌ فضفاض لا نسخةٌ من مدّة
+                        // العرض — مصدرها الوحيد `AUTO` في story.mjs.
+                        setTimeout(function () { r.removeAttribute('data-story'); }, 14000);
+                    }
+                } catch (e) { }
+                var sel = light ? '#film-flat' : '.film-layer__img';
+                var n = document.querySelectorAll('#film ' + sel);
+                // الطقم العمودي يُسنَد على <source> لا على <img>: المتصفّح هو
+                // من يقيّم `media` ويعيد التقييم عند تدوير الجهاز، فتنتقل
+                // مسؤوليّة الاتّجاه إليه بلا مستمع resize ولا سطر JS.
+                // والإسناد قبل <img> ضرورةٌ لا ترتيب: إسناد src أوّلًا يبدأ
+                // تحميل المرشّح الأفقي فورًا، فيدفع الجوّال ثمن طقمَين.
+                var q = document.querySelectorAll('#film picture > source[data-srcset]');
+                for (var j = 0; j < q.length; j++) {
+                    var owner = q[j].parentNode.querySelector(light ? '#film-flat' : '.film-layer__img');
+                    if (!owner) continue;                 // مصدرٌ لا يخصّ هذا المسار
+                    q[j].sizes = '100vw';
+                    q[j].srcset = q[j].dataset.srcset;
+                }
+                // النَّول لا يتنحّى إلا بعد أن **تصل** الصورة فعلًا.
+                // ضبط data-film هنا مباشرةً كان سيُخفي القماش قبل وصول
+                // الطبقات، فيواجه الزائر سوادًا — وهو بالضبط ما بُني ترتيب
+                // الطبقات لتفاديه (style.css: «النَّول يتنحّى حين يقوم الفيلم»).
+                var left = n.length;
+                var up = function () {
+                    if (--left > 0) return;
+                    r.setAttribute('data-film', light ? 'still' : 'up');
+                    // main.js تنتظر هذه اللحظة كي تبدأ القصّة **بعد** وصول
+                    // البكسلات لا قبلها. وتفحص الخاصيّة أيضًا عند إقلاعها،
+                    // فلا يهمّ أيّهما سبق الآخر — الحزمة أم الصور.
+                    try { document.dispatchEvent(new CustomEvent('sura:film')); } catch (e) { }
+                };
+                for (var i = 0; i < n.length; i++) {
+                    n[i].addEventListener('load', up);
+                    n[i].addEventListener('error', up);
+                    n[i].sizes = '100vw';
+                    n[i].srcset = n[i].dataset.srcset;
+                    n[i].src = n[i].dataset.src;
+                    if (i === 0) n[i].fetchPriority = 'high';
+                }
+            })();
+        </script>
+
+        <!-- Still preload="none" in markup: main.js turns it on only once `home`
+             is confirmed to be the visible route, so a deep link to #games never
+             pulls the clip onto the wire.
+
+             POSTER. A still frame pulled from this same clip by Cloudinary
+             (`so_2` = two seconds in), 124KB. It is not a placeholder — it is the
+             backdrop in its own right:
+               · it paints the real scene instantly, long before any video arrives;
+               · on a slow or metered connection main.js never loads the video AT
+                 ALL and animates this frame with GSAP instead (see initHeroStill);
+               · a <video> shows its poster without downloading a byte of video, so
+                 this costs nothing extra on the fast path.
+
+             QUALITY. Was `q_auto` at w_1920, which on a 2x display is a 1920px
+             image stretched across 2880 device pixels — that upscale, not the
+             codec, is why it looked soft. The tiers below are now cut by DEVICE
+             pixels (`min-resolution`) as well as CSS width, and the desktop tiers
+             ask for `q_auto:best`. -->
+        <!-- الملصق في data-poster لا poster: المتصفّح يجلب الـposter بمعزل عن
+             `display:none` تمامًا، فكان يُحمَّل 124KB لمقطعٍ لا يُعرض أصلًا تحت
+             `data-hero="layers"`. تُحوّله main.js إلى `poster` حين يكون المقطع
+             هو الهيرو فعلًا — ولا شيء يتغيّر في ذلك المسار. -->
+        <video class="video-layer" id="video-home" muted loop playsinline preload="none"
+               data-poster="https://res.cloudinary.com/dcgalovye/video/upload/f_auto,q_auto:good,w_1600,so_2/v1779870414/output_hboakw.jpg">
+            <!-- phones: small screen held close; w_720 is already sharp there -->
+            <source media="(max-width: 700px)" src="https://res.cloudinary.com/dcgalovye/video/upload/f_auto,q_auto:good,w_720/v1779870414/output_hboakw.mp4" type="video/mp4">
+            <!-- retina laptops: 1400 CSS px at 2x needs ~2800 real pixels -->
+            <source media="(max-width: 1400px) and (min-resolution: 1.5dppx)" src="https://res.cloudinary.com/dcgalovye/video/upload/f_auto,q_auto:best,w_1920/v1779870414/output_hboakw.mp4" type="video/mp4">
+            <source media="(max-width: 1400px)" src="https://res.cloudinary.com/dcgalovye/video/upload/f_auto,q_auto:best,w_1280/v1779870414/output_hboakw.mp4" type="video/mp4">
+            <source src="https://res.cloudinary.com/dcgalovye/video/upload/f_auto,q_auto:best,w_1920/v1779870414/output_hboakw.mp4" type="video/mp4">
+        </video>
+        <div class="video-overlay" id="video-overlay"></div>
+    </div>
+
+    <!-- Floating Top Navigation Pill -->
+    <header class="header">
+        <!-- The artwork IS the navbar. Only transparent hotspot links sit on top.
+             All functional IDs/classes are preserved so existing JS keeps working. -->
+        <nav class="sura-navbar" id="nav-container" aria-label="شريط تنقّل سُرى">
+
+            <!-- Desktop/tablet: the misbaha artwork IS the navbar; 3 glow states
+                 crossfade so the light travels across the beads on route change. -->
+            <div class="sura-navbar__stage">
+                <picture>
+                    <source srcset="public/navbar/misbaha-home.webp" type="image/webp">
+                    <img class="sura-navbar__img is-active" data-route="home"       src="public/navbar/misbaha-home.png"       alt="" aria-hidden="true">
+                </picture>
+                <!-- lazy: these two are never the first paint, and under 768px the
+                     stage is display:none so they stay off the wire entirely. -->
+                <picture>
+                    <source srcset="public/navbar/misbaha-games.webp" type="image/webp">
+                    <img class="sura-navbar__img"           data-route="games"      src="public/navbar/misbaha-games.png"      alt="" aria-hidden="true" loading="lazy">
+                </picture>
+                <picture>
+                    <source srcset="public/navbar/misbaha-newsletter.webp" type="image/webp">
+                    <img class="sura-navbar__img"           data-route="newsletter" src="public/navbar/misbaha-newsletter.png" alt="" aria-hidden="true" loading="lazy">
+                </picture>
+                <script>
+                    // «صورةٌ لم تصل لا تُرسَم» — نفس قاعدة طبقات المشهد، مطبَّقةً
+                    // على المسبحة. بدونها يرسم كروم مكانَ الصورة إطارًا فاتحًا
+                    // ريثما تصل، فيظهر خطٌّ أبيضُ عريض عبر الشريط. مضمّنةٌ هنا لا
+                    // في app.js: الشريط يُطلى قبل أن تصل الحزمة بمئات الميلي‑ثانية.
+                    (function () {
+                        var n = document.querySelectorAll('.sura-navbar__img');
+                        var ok = function (e) { e.setAttribute('data-ready', ''); };
+                        for (var i = 0; i < n.length; i++) {
+                            if (n[i].complete) { ok(n[i]); continue; }
+                            n[i].addEventListener('load', function () { ok(this); });
+                            // الفشل يُعدّ وصولًا: صورةٌ مكسورة أهونُ من شريطٍ غائب.
+                            n[i].addEventListener('error', function () { ok(this); });
+                        }
+                        // شبكة أمانٍ أخيرة — لا يمكن للشريط أن يبقى خفيًّا مهما جرى.
+                        setTimeout(function () {
+                            var m = document.querySelectorAll('.sura-navbar__img:not([data-ready])');
+                            for (var j = 0; j < m.length; j++) ok(m[j]);
+                        }, 8000);
+                    })();
+                </script>
+
+                <div class="sura-navbar__hotspots">
+                    <!-- hide the artwork's baked labels, then paint live Reem Kufi ones -->
+                    <div class="nav-labels-mask" aria-hidden="true"></div>
+
+                    <!-- nav links — .nav-link + data-target + href kept so app.js
+                         drives scroll + .active exactly as before -->
+                    <ul class="nav-links" id="nav-links">
+                        <div class="nav-indicator-pill" id="nav-indicator-pill"></div>
+                        <li><a href="#home"       class="nav-link nav-label nav-label--home active" data-target="home"       aria-current="page" aria-label="الرئيسية">الرئيسية</a></li>
+                        <li><a href="#games"      class="nav-link nav-label nav-label--games"        data-target="games"      aria-label="الألعاب الذهنية">الألعاب الذهنية</a></li>
+                        <li><a href="#newsletter" class="nav-link nav-label nav-label--newsletter"   data-target="newsletter" aria-label="نشرة سُرى">نشرة سُرى</a></li>
+                    </ul>
+
+                    <!-- logo سُرى → home. The wordmark used to be baked into the
+                         misbaha PNGs; it is now erased from them (see
+                         public/navbar/_pre-logo/ for the pre-erase art) and the
+                         real logo is laid over the same slot, so it can be
+                         swapped without regenerating the artwork. -->
+                    <a href="#home" class="nav-hotspot nav-hotspot--logo" id="nav-logo" aria-label="سُرى">
+                        <picture>
+                            <source srcset="public/brand/sura-logo-640.webp" type="image/webp">
+                            <img class="nav-logo-mark" src="public/brand/sura-logo-640.png" alt="" aria-hidden="true">
+                        </picture>
+                        <span class="sr-only">سُرى</span>
+                    </a>
+
+                    <!-- account cluster — SAME functional IDs; app.js swaps #login-button
+                         text to the name & unhides #logout-button when signed in -->
+                    <div class="nav-account" id="nav-account">
+                        <a href="#login" class="nav-login-bead" id="login-button" role="button" aria-label="تسجيل الدخول">دخول</a>
+                        <button type="button" class="nav-iconbtn" id="settings-button" aria-label="الإعدادات والعرض">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                        </button>
+                        <button type="button" class="nav-logout-btn" id="logout-button" aria-label="خروج" hidden>خروج</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile bar (art is unusable narrow → compact text bar with the
+                 real nav links inline; no hamburger). The links are .nav-link
+                 [data-target] so app.js drives scroll + .active exactly like the
+                 desktop ones. The account cluster is filled by the inline glue
+                 script, proxying clicks to the real #login/#settings/#logout. -->
+            <div class="sura-mbar">
+                <a href="#home" class="sura-mbar__logo nav-link" data-target="home" aria-label="سُرى">
+                    <picture>
+                        <source srcset="public/brand/sura-logo-320.webp" type="image/webp">
+                        <img src="public/brand/sura-logo-320.png" alt="" aria-hidden="true">
+                    </picture>
+                    <span class="sr-only">سُرى</span>
+                </a>
+                <nav class="sura-mbar__links" aria-label="التنقّل">
+                    <a href="#home"       class="nav-link sura-mbar__link active" data-target="home">الرئيسية</a>
+                    <a href="#games"      class="nav-link sura-mbar__link"        data-target="games">الألعاب</a>
+                    <a href="#newsletter" class="nav-link sura-mbar__link"        data-target="newsletter">النشرة</a>
+                </nav>
+                <div class="sura-mbar__acct" id="sura-mbar-acct"><!-- proxies filled by inline script --></div>
+            </div>
+
+            <!-- kept only for JS compatibility (mobile-drawer code paths); not shown -->
+            <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle navigation menu" hidden>
+                <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Main Scrolling Layout -->
+    <main class="main-content">
+
+        <!-- 1. Hero Landing Section -->
+        <section class="hero-section scroll-section active" id="home">
+            <!-- المدرج: مسافةُ التمرير التي تُسحَب فيها القصّة، وهي فارغة عمدًا —
+                 المشهد كلّه يُرسَم في .film-stage خلف هذا القسم. بدونه لا يتمرّر
+                 #home ولا بكسل (محتواه يملأ شاشةً واحدة)، ولا قصّةَ أصلًا.
+                 ارتفاعه في style.css تحت html[data-hero="story"]، ويُلغى تحت
+                 prefers-reduced-motion فتعود الصفحة شاشةً واحدة ساكنة. -->
+            <div class="hero-runway" aria-hidden="true"></div>
+            <div class="hero-inner-content animate-fade-up">
+                <!-- Main Dynamic Heading -->
+                <h1 class="hero-title" id="main-heading">ابدأ سُراك</h1>
+
+                <!-- Subtitle Description -->
+                <p class="hero-description" id="hero-subtext">
+                    <span class="hero-phase-line" id="hero-phase-line">كلُّ طريقٍ يحملُ قصة</span><br>وكلُّ ليلةٍ تبدأُ مع سُرى
+                </p>
+
+                <!-- Buttons Group -->
+                <div class="hero-buttons">
+                    <a href="#games" class="btn-primary" id="get-started-btn">ابدأ اللعب &larr;</a>
+                    <a href="#newsletter" class="btn-secondary" id="watch-demo-btn">نشرة سُرى!</a>
+                </div>
+            </div>
+
+            <!-- Scroll down prompt indicator -->
+            <div class="scroll-indicator-container">
+                <a href="#games" class="scroll-indicator">
+                    <span>اسحب للأسفل</span>
+                    <svg viewBox="0 0 24 24" class="scroll-arrow" aria-hidden="true">
+                        <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                    </svg>
+                </a>
+            </div>
+        </section>
+
+
+        <!-- 2. Games List Section -->
+        <section class="second-page scroll-section" id="games">
+            <div class="games-container animate-fade-up">
+                <!-- Premium Section Header -->
+                <header class="games-header">
+                    <span class="games-subtitle">ألعاب سُرى الذهنية</span>
+                    <h2 class="games-title">تأمّل، فكّر، والعب</h2>
+                    <p class="games-desc">باقة من الألعاب اليومية المصممة بلغة الضاد لتهدئة العقل وتنشيط الفكر في أجواء سينمائية فاخرة.</p>
+                </header>
+
+                <!-- Daily adrenaline strip: combo progress · countdown · level -->
+                <div class="daily-strip" id="daily-strip">
+                    <!-- The «٦» is a PLACEHOLDER for the pre-JS paint only: app.js
+                         overwrites it from LIVE_GAMES.length (src/main.js:4053) on
+                         every refresh, so the running site is always right. It read
+                         «8» until August 2026 — stale from when eight games were
+                         live — which is what anyone reading the raw HTML (or a
+                         scraper, or a reviewer) saw. Keep it equal to
+                         LIVE_GAMES.length whenever that list changes. -->
+                    <span class="combo-tracker" id="grid-combo">ألعاب اليوم: <b>0</b>/<span id="grid-combo-total">6</span></span>
+                    <span class="countdown-badge">لغز جديد بعد <span id="grid-countdown">00:00:00</span></span>
+                    <span class="combo-tracker" id="grid-level">الرتبة <b>1</b></span>
+                    <span class="daily-goal" id="grid-daily-goal">هدف اليوم: أكمل مستوى</span>
+                </div>
+
+                <!-- Premium Category Filter Pills -->
+                <div class="filters-container">
+                    <button class="filter-pill active" data-filter="all">الكل</button>
+                    <button class="filter-pill" data-filter="words">كلمات</button>
+                    <button class="filter-pill" data-filter="wisdom">حكمة وأمثال</button>
+                    <button class="filter-pill" data-filter="wit">فطنة وتخمين</button>
+                </div>
+
+                <!-- Games Cards Grid (11 Luxury Vector Cards + 1 Playable Wordle Card) -->
+                <div class="games-grid" id="games-grid">
+                    
+                    <!-- 3. خيوط (Strands) -->
+                    <div class="game-card active-card" data-category="words" id="strands-trigger-card" style="--delay: 0.2s; display: none;">
+                        <div class="bracket top-left"></div>
+                        <div class="bracket top-right"></div>
+                        <div class="bracket bottom-left"></div>
+                        <div class="bracket bottom-right"></div>
+
+                        <div class="card-header-info">
+                            <span class="card-serial">01 . PL</span>
+                            <span class="live-badge">العب الآن</span>
+                            <button type="button" class="card-info-btn" data-rules="strands" aria-label="شرح اللعبة" title="شرح اللعبة">ⓘ</button>
+                        </div>
+                        
+                        <div class="board-container texture-palm">
+                            <div class="strands-vector">
+                                <svg class="strands-svg" viewBox="0 0 160 160">
+                                    <path d="M 40 40 L 80 40 C 100 40, 100 120, 120 120 L 80 120" fill="none" stroke="url(#gold-grad)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="draw-line" />
+                                    <defs>
+                                        <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                            <stop offset="0%" stop-color="#ff7e5f" />
+                                            <stop offset="50%" stop-color="#feb47b" />
+                                            <stop offset="100%" stop-color="#FFF1C5" />
+                                        </linearGradient>
+                                    </defs>
+                                    <circle cx="40" cy="40" r="14" fill="#0f172a" stroke="#feb47b" stroke-width="1.5" />
+                                    <text x="40" y="44" fill="#f8fafc" text-anchor="middle" font-size="12" font-weight="bold">خ</text>
+                                    <circle cx="80" cy="40" r="14" fill="#0f172a" stroke="#feb47b" stroke-width="1.5" />
+                                    <text x="80" y="44" fill="#f8fafc" text-anchor="middle" font-size="12" font-weight="bold">ي</text>
+                                    <circle cx="80" cy="120" r="14" fill="#0f172a" stroke="#feb47b" stroke-width="1.5" />
+                                    <text x="80" y="14" fill="#f8fafc" text-anchor="middle" font-size="12" font-weight="bold" transform="translate(0, 110)">ط</text>
+                                    <circle cx="120" cy="120" r="14" fill="#0f172a" stroke="#feb47b" stroke-width="1.5" />
+                                    <text x="120" y="14" fill="#f8fafc" text-anchor="middle" font-size="12" font-weight="bold" transform="translate(0, 110)">و</text>
+                                    
+                                    <circle cx="40" cy="120" r="12" fill="#0c111d" stroke="rgba(255,255,255,0.1)" stroke-width="1" />
+                                    <circle cx="120" cy="40" r="12" fill="#0c111d" stroke="rgba(255,255,255,0.1)" stroke-width="1" />
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer-info">
+                            <span class="card-texture">نخل · PALM</span>
+                        </div>
+                        
+                        <div class="game-info">
+                            <span class="game-english-title">STRANDS</span>
+                            <h3 class="game-arabic-title">خيوط</h3>
+                            <p class="game-description">اكتشف الكلمات المتصلة والمخفية على شبكة الحروف العائمة.</p>
+                            <button class="btn-play-now" id="strands-play-btn">ابدأ الآن</button>
+                        </div>
+                    </div>
+
+                    <!-- 3b. أمثال (Proverbs) -->
+                    <div class="game-card active-card" data-category="wisdom" id="amthal-trigger-card" style="--delay: 0.22s;">
+                        <div class="bracket top-left"></div>
+                        <div class="bracket top-right"></div>
+                        <div class="bracket bottom-left"></div>
+                        <div class="bracket bottom-right"></div>
+
+                        <div class="card-header-info">
+                            <span class="card-serial">02 . PR</span>
+                            <span class="live-badge">العب الآن</span>
+                            <button type="button" class="card-info-btn" data-rules="amthal" aria-label="شرح اللعبة" title="شرح اللعبة">ⓘ</button>
+                        </div>
+
+                        <div class="board-container texture-leather">
+                            <!-- آليّةُ اللعبة نفسها لا وصفًا لها: «الصبر مفتاح الفرج»
+                                 من `bank/saudi/amthal.json`، بصندوقٍ لكلّ كلمة كما
+                                 يرسمها `render()` في `src/games/amthal.js` — المقفولُ
+                                 أخضر، وما لم يُكتَب بعدُ يظهر بحرفه الأوّل ونقطةٍ عن
+                                 كلّ حرفٍ باقٍ، وهو ما يولّده `placeholders` هناك. -->
+                            <div class="amthal-vector amthal-scaffold">
+                                <span class="amthal-quote">”</span>
+                                <span class="amthal-hint">💡 بالصبر تُفرَّج الشدائد</span>
+                                <span class="amthal-word w1 locked">الصبر</span>
+                                <span class="amthal-word w2 locked">مفتاح</span>
+                                <span class="amthal-word w3"><i class="aw-dots">ا····</i><i class="aw-ans">الفرج</i></span>
+                            </div>
+                        </div>
+
+                        <div class="card-footer-info">
+                            <span class="card-texture">جلد · LEATHER</span>
+                        </div>
+
+                        <div class="game-info">
+                            <span class="game-english-title">AMTHAL</span>
+                            <h3 class="game-arabic-title">أمثال</h3>
+                            <p class="game-description">اكتب المثل الشعبي السعودي كاملًا مستعينًا بمعناه — والحروف تنكشف كلما صعب.</p>
+                            <button class="btn-play-now" id="amthal-play-btn">ابدأ الآن</button>
+                        </div>
+                    </div>
+
+                    <!-- كلمة ناقصة (Missing Word) -->
+                    <div class="game-card active-card" data-category="words" id="missingword-trigger-card" style="--delay: 0.24s; display: none;">
+                        <div class="bracket top-left"></div>
+                        <div class="bracket top-right"></div>
+                        <div class="bracket bottom-left"></div>
+                        <div class="bracket bottom-right"></div>
+
+                        <div class="card-header-info">
+                            <span class="card-serial">03 . MW</span>
+                            <span class="live-badge">العب الآن</span>
+                            <button type="button" class="card-info-btn" data-rules="missing_word" aria-label="شرح اللعبة" title="شرح اللعبة">ⓘ</button>
+                        </div>
+
+                        <div class="board-container texture-palm">
+                            <div class="amthal-vector">
+                                <span class="amthal-chip c1">العبارة</span>
+                                <span class="amthal-chip c2">الكلمة</span>
+                                <span class="amthal-chip c3">الناقصة</span>
+                                <span class="amthal-quote">”</span>
+                            </div>
+                        </div>
+
+                        <div class="card-footer-info">
+                            <span class="card-texture">نخل · PALM</span>
+                        </div>
+
+                        <div class="game-info">
+                            <span class="game-english-title">MISSING WORD</span>
+                            <h3 class="game-arabic-title">كلمة ناقصة</h3>
+                            <p class="game-description">أكمل العبارة المألوفة باختيار الكلمة الناقصة من أربعة خيارات.</p>
+                            <button class="btn-play-now" id="missingword-play-btn">ابدأ الآن</button>
+                        </div>
+                    </div>
+
+                    <!-- رتّب السالفة (Story Order) -->
+                    <div class="game-card active-card" data-category="wisdom" id="storyorder-trigger-card" style="--delay: 0.24s; display: none;">
+                        <div class="bracket top-left"></div>
+                        <div class="bracket top-right"></div>
+                        <div class="bracket bottom-left"></div>
+                        <div class="bracket bottom-right"></div>
+
+                        <div class="card-header-info">
+                            <span class="card-serial">04 . SO</span>
+                            <span class="live-badge">العب الآن</span>
+                            <button type="button" class="card-info-btn" data-rules="story_order" aria-label="شرح اللعبة" title="شرح اللعبة">ⓘ</button>
+                        </div>
+
+                        <div class="board-container texture-palm">
+                            <div class="amthal-vector">
+                                <span class="amthal-chip c1">السالفة</span>
+                                <span class="amthal-chip c2">رتّب</span>
+                                <span class="amthal-chip c3">الأجزاء</span>
+                                <span class="amthal-quote">”</span>
+                            </div>
+                        </div>
+
+                        <div class="card-footer-info">
+                            <span class="card-texture">نخل · PALM</span>
+                        </div>
+
+                        <div class="game-info">
+                            <span class="game-english-title">STORY ORDER</span>
+                            <h3 class="game-arabic-title">رتّب السالفة</h3>
+                            <p class="game-description">رتّب أجزاء سالفةٍ يومية مبعثرة حسب تسلسلها المنطقي — السبب قبل النتيجة.</p>
+                            <button class="btn-play-now" id="storyorder-play-btn">ابدأ الآن</button>
+                        </div>
+                    </div>
+
+                    <!-- قرّبها (Warmer) -->
+                    <div class="game-card active-card" data-category="wit" id="warmer-trigger-card" style="--delay: 0.24s;">
+                        <div class="bracket top-left"></div>
+                        <div class="bracket top-right"></div>
+                        <div class="bracket bottom-left"></div>
+                        <div class="bracket bottom-right"></div>
+
+                        <div class="card-header-info">
+                            <span class="card-serial">05 . QB</span>
+                            <span class="live-badge">العب الآن</span>
+                            <button type="button" class="card-info-btn" data-rules="warmer" aria-label="شرح اللعبة" title="شرح اللعبة">ⓘ</button>
+                        </div>
+
+                        <div class="board-container texture-ember">
+                            <!-- The board previews the mechanic: each guess returns a
+                                 proximity bar that runs cold -> hot as you close in. -->
+                            <div class="warmer-vector">
+                                <span class="warmer-row">
+                                    <span class="warmer-word">بحر</span>
+                                    <span class="warmer-bar"><i style="width: 18%;"></i></span>
+                                    <span class="warmer-tag">❄️</span>
+                                </span>
+                                <span class="warmer-row">
+                                    <span class="warmer-word">مطر</span>
+                                    <span class="warmer-bar"><i style="width: 54%;"></i></span>
+                                    <span class="warmer-tag">🌡️</span>
+                                </span>
+                                <span class="warmer-row is-hot">
+                                    <span class="warmer-word">سحاب</span>
+                                    <span class="warmer-bar"><i style="width: 88%;"></i></span>
+                                    <span class="warmer-tag">🔥</span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="card-footer-info">
+                            <span class="card-texture">جمر · EMBER</span>
+                        </div>
+
+                        <div class="game-info">
+                            <span class="game-english-title">WARMER</span>
+                            <h3 class="game-arabic-title">قرّبها</h3>
+                            <p class="game-description">خمّن الكلمة المخفية بالكتابة — كل تخمين يقول لك قد إيش قرّبت بالمعنى (🔥 حار / ❄️ بارد).</p>
+                            <button class="btn-play-now" id="warmer-play-btn">ابدأ الآن</button>
+                        </div>
+                    </div>
+
+                    <!-- لمحة (Lamha) -->
+                    <div class="game-card active-card" data-category="wit" id="lamha-trigger-card" style="--delay: 0.28s;">
+                        <div class="bracket top-left"></div>
+                        <div class="bracket top-right"></div>
+                        <div class="bracket bottom-left"></div>
+                        <div class="bracket bottom-right"></div>
+
+                        <div class="card-header-info">
+                            <span class="card-serial">06 . LM</span>
+                            <span class="live-badge">العب الآن</span>
+                            <button type="button" class="card-info-btn" data-rules="lamha" aria-label="شرح اللعبة" title="شرح اللعبة">ⓘ</button>
+                        </div>
+
+                        <div class="board-container texture-glass">
+                            <!-- The board previews the mechanic: three clues that fade in
+                                 one by one, each costing a star off the bet. -->
+                            <div class="lamha-vector">
+                                <span class="lamha-clue s3">
+                                    <span class="lamha-num">1</span>ينزل من السماء
+                                    <span class="lamha-stars">⭐⭐⭐</span>
+                                </span>
+                                <span class="lamha-clue s2">
+                                    <span class="lamha-num">2</span>الأودية تسيل
+                                    <span class="lamha-stars">⭐⭐</span>
+                                </span>
+                                <span class="lamha-clue s1">
+                                    <span class="lamha-num">3</span>تشمّ ريحته
+                                    <span class="lamha-stars">⭐</span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="card-footer-info">
+                            <span class="card-texture">زجاج · GLASS</span>
+                        </div>
+
+                        <div class="game-info">
+                            <span class="game-english-title">LAMHA</span>
+                            <h3 class="game-arabic-title">لمحة</h3>
+                            <p class="game-description">خمّن الكلمة من 3 تلميحات تتكشّف — راهن وخمّن بدري لنجوم أكثر ⭐⭐⭐.</p>
+                            <button class="btn-play-now" id="lamha-play-btn">ابدأ الآن</button>
+                        </div>
+                    </div>
+
+                    <div class="game-card active-card" data-category="wit" id="zayid-trigger-card" style="--delay: 0.3s; display: none;">
+                        <div class="bracket top-left"></div>
+                        <div class="bracket top-right"></div>
+                        <div class="bracket bottom-left"></div>
+                        <div class="bracket bottom-right"></div>
+
+                        <div class="card-header-info">
+                            <span class="card-serial">07 . ZD</span>
+                            <span class="live-badge">العب الآن</span>
+                            <button type="button" class="card-info-btn" data-rules="zayid" aria-label="شرح اللعبة" title="شرح اللعبة">ⓘ</button>
+                        </div>
+
+                        <div class="board-container texture-glass">
+                            <!-- The board previews the mechanic: a bidding ladder rising to a
+                                 fold, where the last bid must be proven. -->
+                            <div class="zayid-vector">
+                                <span class="zayid-vrow me"><span class="zayid-vwho">أنت</span><span class="zayid-vbid">أذكر ١٠</span></span>
+                                <span class="zayid-vrow op"><span class="zayid-vwho">ذاكر</span><span class="zayid-vbid">أنا ١٢</span></span>
+                                <span class="zayid-vrow me"><span class="zayid-vwho">أنت</span><span class="zayid-vbid">١٤ 🔥</span></span>
+                                <span class="zayid-vrow fold"><span class="zayid-vwho">ذاكر</span><span class="zayid-vbid">أستسلم 🏳️</span></span>
+                            </div>
+                        </div>
+
+                        <div class="card-footer-info">
+                            <span class="card-texture">زجاج · GLASS</span>
+                        </div>
+
+                        <div class="game-info">
+                            <span class="game-english-title">ZAYID</span>
+                            <h3 class="game-arabic-title">زايد</h3>
+                            <p class="game-description">زايد خصمك بعدد ما تقدر تذكر — واللي يستسلم، الثاني يثبت كلامه 🃏.</p>
+                            <button class="btn-play-now" id="zayid-play-btn">ابدأ الآن</button>
+                        </div>
+                    </div>
+
+                    <!-- 4. تشابك (Connections) -->
+                    <div class="game-card active-card" data-category="words" id="connections-trigger-card" style="--delay: 0.25s;">
+                        <div class="bracket top-left"></div>
+                        <div class="bracket top-right"></div>
+                        <div class="bracket bottom-left"></div>
+                        <div class="bracket bottom-right"></div>
+
+                        <div class="card-header-info">
+                            <span class="card-serial">08 . PL</span>
+                            <span class="live-badge">العب الآن</span>
+                            <button type="button" class="card-info-btn" data-rules="connections" aria-label="شرح اللعبة" title="شرح اللعبة">ⓘ</button>
+                        </div>
+                        
+                        <div class="board-container texture-sadu">
+                            <div class="connections-vector">
+                                <div class="conn-row">
+                                    <div class="conn-block clr-orange">رمل</div>
+                                    <div class="conn-block clr-green">شمس</div>
+                                    <div class="conn-block clr-amber">قمر</div>
+                                    <div class="conn-block clr-purple">نجم</div>
+                                </div>
+                                <div class="conn-row">
+                                    <div class="conn-block clr-green">صحراء</div>
+                                    <div class="conn-block clr-orange">بحر</div>
+                                    <div class="conn-block clr-purple">سماء</div>
+                                    <div class="conn-block clr-amber">أفق</div>
+                                </div>
+                                <div class="conn-row">
+                                    <div class="conn-block clr-purple">شجر</div>
+                                    <div class="conn-block clr-amber">نبت</div>
+                                    <div class="conn-block clr-orange">زهر</div>
+                                    <div class="conn-block clr-green">نخل</div>
+                                </div>
+                                <div class="conn-row">
+                                    <div class="conn-block clr-amber">ماء</div>
+                                    <div class="conn-block clr-purple">غيم</div>
+                                    <div class="conn-block clr-green">مطر</div>
+                                    <div class="conn-block clr-orange">ندى</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer-info">
+                            <span class="card-texture">قماش السدو · SADU</span>
+                        </div>
+                        
+                        <div class="game-info">
+                            <span class="game-english-title">CONNECTIONS</span>
+                            <h3 class="game-arabic-title">تشابك</h3>
+                            <p class="game-description">اجمع الكلمات الأربع التي يربطها معنى أو رابط مجازي مشترك.</p>
+                            <button class="btn-play-now" id="connections-play-btn">ابدأ الآن</button>
+                        </div>
+                    </div>
+
+                    <!-- 5. زليج (Tiles) -->
+                    <div class="game-card active-card" data-category="numbers" id="tiles-trigger-card" style="--delay: 0.3s; display: none;">
+                        <div class="bracket top-left"></div>
+                        <div class="bracket top-right"></div>
+                        <div class="bracket bottom-left"></div>
+                        <div class="bracket bottom-right"></div>
+
+                        <div class="card-header-info">
+                            <span class="card-serial">09 . PL</span>
+                            <span class="live-badge">العب الآن</span>
+                            <button type="button" class="card-info-btn" data-rules="tiles" aria-label="شرح اللعبة" title="شرح اللعبة">ⓘ</button>
+                        </div>
+                        
+                        <div class="board-container texture-glazed">
+                            <div class="tiles-vector">
+                                <svg class="tiles-svg" viewBox="0 0 160 160">
+                                    <rect x="5" y="5" width="150" height="150" rx="12" fill="#2d1033" stroke="rgba(209,145,60,0.15)" stroke-width="1.5" />
+                                    <polygon points="80,20 140,80 80,140 20,80" fill="none" stroke="#D1913C" stroke-width="1.5" stroke-dasharray="2,2" />
+                                    <polygon points="80,35 125,80 80,125 35,80" fill="#4A154B" stroke="#FFF1C5" stroke-width="1" />
+                                    <circle cx="80" cy="80" r="18" fill="#D1913C" />
+                                    <polygon points="80,55 86,74 105,80 86,86 80,105 74,86 55,80 74,74" fill="#FFF1C5" />
+                                    <circle cx="45" cy="45" r="4" fill="#feb47b" />
+                                    <circle cx="115" cy="45" r="4" fill="#feb47b" />
+                                    <circle cx="45" cy="115" r="4" fill="#feb47b" />
+                                    <circle cx="115" cy="115" r="4" fill="#feb47b" />
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer-info">
+                            <span class="card-texture">بلاط مزجج · GLAZED TILE</span>
+                        </div>
+                        
+                        <div class="game-info">
+                            <span class="game-english-title">TILES</span>
+                            <h3 class="game-arabic-title">زليج</h3>
+                            <p class="game-description">طابق البلاطات المزخرفة بنقوش أندلسية فريدة وأفرغ اللوحة.</p>
+                            <button class="btn-play-now" id="tiles-play-btn">ابدأ الآن</button>
+                        </div>
+                    </div>
+
+                    <!-- 6. سودوكو (Sudoku) -->
+                    <div class="game-card active-card" data-category="numbers" id="sudoku-trigger-card" style="--delay: 0.35s; display: none;">
+                        <div class="bracket top-left"></div>
+                        <div class="bracket top-right"></div>
+                        <div class="bracket bottom-left"></div>
+                        <div class="bracket bottom-right"></div>
+
+                        <div class="card-header-info">
+                            <span class="card-serial">10 . PL</span>
+                            <span class="live-badge">العب الآن</span>
+                            <button type="button" class="card-info-btn" data-rules="sudoku" aria-label="شرح اللعبة" title="شرح اللعبة">ⓘ</button>
+                        </div>
+                        
+                        <div class="board-container texture-basalt">
+                            <div class="sudoku-vector">
+                                <div class="sudoku-grid">
+                                    <div class="s-cell bold">5</div>
+                                    <div class="s-cell"></div>
+                                    <div class="s-cell"></div>
+                                    <div class="s-cell bold">7</div>
+                                    <div class="s-cell"></div>
+                                    <div class="s-cell active">4</div>
+                                    <div class="s-cell"></div>
+                                    <div class="s-cell"></div>
+                                    <div class="s-cell bold">9</div>
+                                    <div class="s-cell"></div>
+                                    <div class="s-cell active">1</div>
+                                    <div class="s-cell bold">8</div>
+                                    <div class="s-cell"></div>
+                                    <div class="s-cell bold">3</div>
+                                    <div class="s-cell"></div>
+                                    <div class="s-cell"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer-info">
+                            <span class="card-texture">حجر بازلتي · BASALT</span>
+                        </div>
+                        
+                        <div class="game-info">
+                            <span class="game-english-title">SUDOKU</span>
+                            <h3 class="game-arabic-title">سودوكو</h3>
+                            <p class="game-description">أرقام عربية وفارسية منسقة في شبكات التناظر الهندسي.</p>
+                            <button class="btn-play-now" id="sudoku-play-btn">ابدأ الآن</button>
+                        </div>
+                    </div>
+
+                    <!-- 7. نحلة الإملاء (Spelling Bee) -->
+                    <div class="game-card active-card" data-category="words" id="bee-trigger-card" style="--delay: 0.4s;">
+                        <div class="bracket top-left"></div>
+                        <div class="bracket top-right"></div>
+                        <div class="bracket bottom-left"></div>
+                        <div class="bracket bottom-right"></div>
+
+                        <div class="card-header-info">
+                            <span class="card-serial">11 . PL</span>
+                            <span class="live-badge">العب الآن</span>
+                            <button type="button" class="card-info-btn" data-rules="spelling_bee" aria-label="شرح اللعبة" title="شرح اللعبة">ⓘ</button>
+                        </div>
+                        
+                        <div class="board-container texture-wax">
+                            <div class="bee-vector">
+                                <div class="honeycomb">
+                                    <div class="hex top-left"><span>أ</span></div>
+                                    <div class="hex top-right"><span>ل</span></div>
+                                    <div class="hex middle-left"><span>ن</span></div>
+                                    <div class="hex middle-center center"><span>م</span></div>
+                                    <div class="hex middle-right"><span>ت</span></div>
+                                    <div class="hex bottom-left"><span>ر</span></div>
+                                    <div class="hex bottom-right"><span>ي</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer-info">
+                            <span class="card-texture">شمع · WAX</span>
+                        </div>
+                        
+                        <div class="game-info">
+                            <span class="game-english-title">SPELLING BEE</span>
+                            <h3 class="game-arabic-title">نحلة الإملاء</h3>
+                            <p class="game-description">صغ أكبر عدد ممكن من الكلمات والاشتقاقات من سبعة حروف فقط.</p>
+                            <button class="btn-play-now" id="bee-play-btn">ابدأ الآن</button>
+                        </div>
+                    </div>
+
+                    <!-- 10. صندوق الحروف (Letter Boxed) -->
+                    <div class="game-card active-card" data-category="words" id="letterboxed-trigger-card" style="--delay: 0.55s; display: none;">
+                        <div class="bracket top-left"></div>
+                        <div class="bracket top-right"></div>
+                        <div class="bracket bottom-left"></div>
+                        <div class="bracket bottom-right"></div>
+
+                        <div class="card-header-info">
+                            <span class="card-serial">12 . PL</span>
+                            <span class="live-badge">العب الآن</span>
+                            <button type="button" class="card-info-btn" data-rules="letterboxed" aria-label="شرح اللعبة" title="شرح اللعبة">ⓘ</button>
+                        </div>
+                        
+                        <div class="board-container texture-brass">
+                            <div class="letterboxed-vector">
+                                <svg viewBox="0 0 160 160" class="boxed-svg">
+                                    <rect x="35" y="35" width="90" height="90" fill="none" stroke="#feb47b" stroke-width="1.5" />
+                                    <path d="M 35 50 L 125 80 L 80 125 L 35 80 Z" fill="none" stroke="rgba(255,255,255,0.4)" stroke-dasharray="3,3" stroke-width="1" />
+                                    <circle cx="50" cy="35" r="8" fill="#0f172a" stroke="#feb47b" stroke-width="1" />
+                                    <text x="50" y="39" fill="#f8fafc" text-anchor="middle" font-size="9">ج</text>
+                                    <circle cx="80" cy="35" r="8" fill="#0f172a" stroke="#feb47b" stroke-width="1" />
+                                    <text x="80" y="39" fill="#f8fafc" text-anchor="middle" font-size="9">د</text>
+                                    <circle cx="110" cy="35" r="8" fill="#0f172a" stroke="#feb47b" stroke-width="1" />
+                                    <text x="110" y="39" fill="#f8fafc" text-anchor="middle" font-size="9">ر</text>
+                                    
+                                    <circle cx="125" cy="50" r="8" fill="#0f172a" stroke="#feb47b" stroke-width="1" />
+                                    <text x="125" y="54" fill="#f8fafc" text-anchor="middle" font-size="9">س</text>
+                                    <circle cx="125" cy="80" r="8" fill="#0f172a" stroke="#feb47b" stroke-width="1" />
+                                    <text x="125" y="84" fill="#f8fafc" text-anchor="middle" font-size="9">ب</text>
+                                    <circle cx="125" cy="110" r="8" fill="#0f172a" stroke="#feb47b" stroke-width="1" />
+                                    <text x="125" y="114" fill="#f8fafc" text-anchor="middle" font-size="9">ت</text>
+                                    
+                                    <circle cx="50" cy="125" r="8" fill="#0f172a" stroke="#feb47b" stroke-width="1" />
+                                    <text x="50" y="129" fill="#f8fafc" text-anchor="middle" font-size="9">م</text>
+                                    <circle cx="80" cy="125" r="8" fill="#0f172a" stroke="#feb47b" stroke-width="1" />
+                                    <text x="80" y="129" fill="#f8fafc" text-anchor="middle" font-size="9">و</text>
+                                    <circle cx="110" cy="125" r="8" fill="#0f172a" stroke="#feb47b" stroke-width="1" />
+                                    <text x="110" y="129" fill="#f8fafc" text-anchor="middle" font-size="9">ق</text>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer-info">
+                            <span class="card-texture">نحاس مطروق · BRASS</span>
+                        </div>
+                        
+                        <div class="game-info">
+                            <span class="game-english-title">LETTER BOXED</span>
+                            <h3 class="game-arabic-title">صندوق الحروف</h3>
+                            <p class="game-description">احبك الكلمات بين أضلاع المربع دون لمس أضلاع متجاورة.</p>
+                            <button class="btn-play-now" id="letterboxed-play-btn">ابدأ الآن</button>
+                        </div>
+                    </div>
+
+                    <!-- 11. نقاط (Pips) -->
+                    <div class="game-card active-card" data-category="numbers" id="pips-trigger-card" style="--delay: 0.6s; display: none;">
+                        <div class="bracket top-left"></div>
+                        <div class="bracket top-right"></div>
+                        <div class="bracket bottom-left"></div>
+                        <div class="bracket bottom-right"></div>
+
+                        <div class="card-header-info">
+                            <span class="card-serial">13 . PL</span>
+                            <span class="live-badge">العب الآن</span>
+                            <button type="button" class="card-info-btn" data-rules="pips" aria-label="شرح اللعبة" title="شرح اللعبة">ⓘ</button>
+                        </div>
+                        
+                        <div class="board-container texture-ivory">
+                            <div class="pips-vector">
+                                <div class="domino-tile">
+                                    <div class="half-side">
+                                        <span class="dot d-top-left"></span>
+                                        <span class="dot d-bottom-right"></span>
+                                    </div>
+                                    <div class="divider"></div>
+                                    <div class="half-side">
+                                        <span class="dot d-center"></span>
+                                    </div>
+                                </div>
+                                <div class="domino-tile vertical">
+                                    <div class="half-side">
+                                        <span class="dot d-top-left"></span>
+                                        <span class="dot d-top-right"></span>
+                                        <span class="dot d-bottom-left"></span>
+                                        <span class="dot d-bottom-right"></span>
+                                    </div>
+                                    <div class="divider"></div>
+                                    <div class="half-side">
+                                        <span class="dot d-center"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer-info">
+                            <span class="card-texture">عاج · IVORY</span>
+                        </div>
+                        
+                        <div class="game-info">
+                            <span class="game-english-title">PIPS</span>
+                            <h3 class="game-arabic-title">نقاط</h3>
+                            <p class="game-description">رتب أحجار الدومينو الهندسية في تطابقات التوازن والجمع الرياضي.</p>
+                            <button class="btn-play-now" id="pips-play-btn">ابدأ الآن</button>
+                        </div>
+                    </div>
+
+                    <!-- 12. كلمة (Wordle) - Custom playable entry card -->
+                    <div class="game-card active-card" data-category="words" id="wordle-trigger-card" style="--delay: 0.65s;">
+                        <div class="bracket top-left"></div>
+                        <div class="bracket top-right"></div>
+                        <div class="bracket bottom-left"></div>
+                        <div class="bracket bottom-right"></div>
+                        
+                        <div class="card-header-info">
+                            <span class="card-serial">14 . PL</span>
+                            <span class="live-badge">العب الآن</span>
+                            <button type="button" class="card-info-btn" data-rules="wordle" aria-label="شرح اللعبة" title="شرح اللعبة">ⓘ</button>
+                        </div>
+                        
+                        <div class="board-container texture-volcanic">
+                            <div class="wordle-vector">
+                                <!-- «سهر» ثمّ «سُرى»: التخمينُ يشترك مع الجواب في
+                                     السين في موضعها (صحيحة) وفي الراء في غير
+                                     موضعها (موجودة) — منطقُ اللعبة نفسه لا ألوانٌ
+                                     مبعثرة. والضمّةُ فوق سينها في خانةٍ واحدة ولا
+                                     تُفرَد وحدها: الحركةُ المنفصلةُ تُرسَم على
+                                     دائرةٍ منقّطة فتُقرأ حرفًا غريبًا. -->
+                                <div class="w-row">
+                                    <div class="w-letter state-correct">س</div>
+                                    <div class="w-letter state-absent">ه</div>
+                                    <div class="w-letter state-present">ر</div>
+                                </div>
+                                <div class="w-row">
+                                    <div class="w-letter state-correct">سُ</div>
+                                    <div class="w-letter state-correct">ر</div>
+                                    <div class="w-letter state-correct">ى</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer-info">
+                            <span class="card-texture">صخر بركاني · VOLCANIC ROCK</span>
+                        </div>
+                        
+                        <div class="game-info">
+                            <span class="game-english-title">ARABIC WORDLE</span>
+                            <h3 class="game-arabic-title">كَلِمة</h3>
+                            <p class="game-description">تحدي لغوي يومي غامر وممتع. هل يمكنك تخمين الكلمة السرية في ست محاولات؟</p>
+                            <button class="btn-play-now" id="play-wordle-btn">ابدأ الآن</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- 3. Sura Newsletter & Leaderboard Section -->
+        <section class="third-page scroll-section" id="newsletter">
+            <div class="newsletter-container animate-fade-up">
+                
+                <!-- TOP ROW: Split Featured Daily Issue -->
+                <div class="featured-issue-section">
+                    
+                    <!-- Left: Featured content details -->
+                    <div class="featured-content-card">
+                        <span class="issue-tag">عدد اليوم · لغز الفجر</span>
+                        <h2 class="featured-wordle-title">كَلِمة</h2>
+                        
+                        <p class="featured-wordle-tagline">"حين تتكشف الحروف، تنكشف معها لطائف اللغة."</p>
+                        <p class="featured-wordle-desc">خمن الكلمة العربية المخفية المكونة من 4 حروف في 6 محاولات ذكية. لغز يومي مصمم لتأمل جماليات لغة الضاد وتوسيع الإدراك.</p>
+                        
+                        <!-- كل ألعاب اليوم لا لعبةً واحدة (المالك، ١٢ أغسطس ٢٠٢٦).
+                             «تحدي اليوم» يفتح **كل** لعبةٍ حيّة كل يوم بصعوبة ذلك
+                             اليوم؛ البطاقة كانت تبرز واحدةً فيظنّ الزائر أنها كلّ ما
+                             هناك. تُملأ من `daily.plan()` — لا قائمة مكتوبة بيد. -->
+                        <div class="daily-roster" id="daily-roster" aria-label="ألعاب تحدي اليوم"></div>
+
+                        <!-- زرٌّ واحد. كان بجانبه «شارة الخير» فحُذف بأمر المالك
+                             (١٨ أغسطس ٢٠٢٦): لم يكن له معالجٌ واحدٌ في الشيفرة
+                             كلّها — ولا في `main.js` ولا في أيّ وحدة — فكان
+                             يَعِد الزائرَ بشيءٍ لا يحدث حين يضغطه. -->
+                        <div class="featured-buttons">
+                            <button class="btn-primary" id="featured-play-wordle-btn">ابدأ الآن &larr;</button>
+                        </div>
+                    </div>
+
+                    <!-- Right: Card vector board preview -->
+                    <div class="featured-preview-card">
+                        <div class="bracket top-left"></div>
+                        <div class="bracket top-right"></div>
+                        <div class="bracket bottom-left"></div>
+                        <div class="bracket bottom-right"></div>
+                        
+                        <div class="card-header-info">
+                            <span class="card-serial">15 . PL</span>
+                            <span class="live-badge">معاينة اللغز</span>
+                        </div>
+                        
+                        <div class="board-container texture-volcanic">
+                            <div class="wordle-vector large-preview">
+                                <!-- «سهر» ثمّ «سُرى»: التخمينُ يشترك مع الجواب في
+                                     السين في موضعها (صحيحة) وفي الراء في غير
+                                     موضعها (موجودة) — منطقُ اللعبة نفسه لا ألوانٌ
+                                     مبعثرة. والضمّةُ فوق سينها في خانةٍ واحدة ولا
+                                     تُفرَد وحدها: الحركةُ المنفصلةُ تُرسَم على
+                                     دائرةٍ منقّطة فتُقرأ حرفًا غريبًا. -->
+                                <div class="w-row">
+                                    <div class="w-letter state-correct">س</div>
+                                    <div class="w-letter state-absent">ه</div>
+                                    <div class="w-letter state-present">ر</div>
+                                </div>
+                                <div class="w-row">
+                                    <div class="w-letter state-correct">سُ</div>
+                                    <div class="w-letter state-correct">ر</div>
+                                    <div class="w-letter state-correct">ى</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer-info">
+                            <span class="card-texture">صخر بركاني · VOLCANIC ROCK</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- MIDDLE ROW: Leaderboard of Best Players & Interactive Subscription -->
+                <div class="newsletter-mid-grid">
+                    
+                    <!-- 1. The Sura Leaderboard -->
+                    <div class="leaderboard-card">
+                        <div class="bracket top-left"></div>
+                        <div class="bracket top-right"></div>
+                        <div class="bracket bottom-left"></div>
+                        <div class="bracket bottom-right"></div>
+
+                        <div class="leaderboard-header">
+                            <div class="leaderboard-title-group">
+                                <span class="card-serial">شرف الفجر</span>
+                                <h3>فرسان سُرى</h3>
+                            </div>
+                            <!-- Live search filter -->
+                            <div class="search-wrapper">
+                                <input type="text" id="leaderboard-search" placeholder="ابحث باسم المستخدم…" autocomplete="off">
+                                <svg viewBox="0 0 24 24" class="search-icon" aria-hidden="true">
+                                    <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Board mode: «عام» = unified XP/rank across all games;
+                             «يومي» = per-game daily board (game selector appears). -->
+                        <div class="leaderboard-modes" id="leaderboard-modes">
+                            <div class="lb-mode-toggle" role="tablist">
+                                <button type="button" class="lb-mode-btn active" data-mode="global" role="tab">عام</button>
+                                <button type="button" class="lb-mode-btn" data-mode="daily" role="tab">يومي</button>
+                            </div>
+                            <select id="lb-game-select" class="lb-game-select" aria-label="اختر اللعبة" hidden>
+                                <option value="wordle">كَلِمة</option>
+                                <option value="connections">تشابك</option>
+                                <option value="spelling_bee">نحلة الإملاء</option>
+                            </select>
+                        </div>
+
+                        <div class="leaderboard-body">
+                            <table class="leaderboard-table">
+                                <thead>
+                                    <tr>
+                                        <th class="rank-col">الترتيب</th>
+                                        <th class="name-col">المتسابق</th>
+                                        <th class="time-col" id="lb-th-3">الألعاب</th>
+                                        <th class="score-col" id="lb-th-4">الخبرة</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="leaderboard-rows">
+                                    <!-- لا قائمة وهميّة (بأمر المالك، ١٢ أغسطس ٢٠٢٦).
+                                         كانت هنا ستّة أسماء مخترعة تُعرَض حتى يصل
+                                         الخادم — وهي تقرأ لوحةَ صدارةٍ حقيقيّة، فتكذب
+                                         على الزائر في أوّل ما يراه. الجدول الآن يبدأ
+                                         بصفٍّ واحد يقول الحقيقة، ويستبدله الخادم. -->
+                                    <tr class="normal-rank">
+                                        <td colspan="4" class="lb-empty" id="lb-boot-cell">جارٍ جلب الفرسان…</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 2. رزنامة الأسبوع — حلّت محلّ «مراسلات الفجر» بأمر المالك
+                         (١٢ أغسطس ٢٠٢٦). وما حُذف لم يكن ميزة: النموذج القديم لم
+                         يكن يرسل البريد إلى أي مكان — لا خادم ولا جدول — بل يعرض
+                         ختمًا ذهبيًّا ويصمت. هذا الجدول يقول شيئًا صحيحًا بدله.
+                         الصفوف من `daily.weekAround()`: صعوبةٌ لا ألواح. -->
+                    <div class="week-card" id="week-card">
+                        <div class="bracket top-left"></div>
+                        <div class="bracket top-right"></div>
+                        <div class="bracket bottom-left"></div>
+                        <div class="bracket bottom-right"></div>
+
+                        <div class="week-head">
+                            <span class="card-serial">رزنامة الأسبوع</span>
+                            <h3>صعوبة كل يوم</h3>
+                            <p class="week-desc">سُرى تتدرّج معك: يبدأ الأسبوع هيّنًا ويشتدّ حتى «التحدي الكبير» يوم الجمعة. اعرف ما ينتظرك قبل أن يأتي.</p>
+                        </div>
+
+                        <table class="week-table">
+                            <thead>
+                                <tr>
+                                    <th class="wk-day-col">اليوم</th>
+                                    <th class="wk-issue-col">العدد</th>
+                                    <th class="wk-tier-col">الصعوبة</th>
+                                </tr>
+                            </thead>
+                            <tbody id="week-rows"></tbody>
+                        </table>
+
+                        <p class="week-foot">كل لغزٍ يجلس يومًا واحدًا فقط، ويتبدّل عند منتصف الليل بتوقيت الرياض.</p>
+                    </div>
+
+                </div>
+
+                <!-- BOTTOM ROW: Report a problem + rate the difficulty -->
+                <div class="feedback-section" id="feedback">
+                    <div class="archives-header">
+                        <span class="games-subtitle">صوتك يصنع سُرى</span>
+                        <h2 class="archive-main-title">أبلغ وقيّم</h2>
+                        <p class="archive-main-desc">وجدتَ خللًا؟ أو عندك فكرة؟ أخبرنا — كل ما يصل نقرأه.</p>
+                    </div>
+
+                    <div class="feedback-grid">
+
+                        <!-- Report -->
+                        <div class="fb-card" style="--delay: 0.1s;">
+                            <div class="fb-card-head">
+                                <span class="fb-kicker">REPORT</span>
+                                <h3 class="fb-title">أبلغ عن مشكلة</h3>
+                                <button type="button" class="fb-demo-btn" id="fb-demo">▶ كيف أبلغ؟</button>
+                            </div>
+                            <p class="fb-card-desc">اوصف المشكلة وأرفق صورة إن أمكن. نرفق تفاصيل جهازك واللعبة تلقائيًّا، فلا تكتبها.</p>
+
+                            <form class="fb-form" id="fb-form" novalidate>
+                                <label class="fb-field">
+                                    <span class="fb-label-row">
+                                        <span class="fb-label">ما المشكلة؟</span>
+                                        <button type="button" class="fb-mic" data-mic="fb-happened" aria-pressed="false" title="اكتب بصوتك: يبقى المايك مفتوحًا حتى توقفه بنفسك" hidden><span class="fb-mic-dot" aria-hidden="true"></span><span class="fb-mic-text">اكتب بصوتك</span></button>
+                                    </span>
+                                    <textarea id="fb-happened" rows="5" maxlength="1200" placeholder="مثال: ضغطت «تلميح» في «كَلِمة» فاختفت اللوحة وبقيت الشاشة سوداء"></textarea>
+                                    <span class="fb-mic-hint" data-hint-for="fb-happened" role="status" aria-live="polite" hidden></span>
+                                </label>
+
+                                <!-- مؤشّر وضوح البلاغ: تشجيعٌ لا بوّابة. لا يمنع
+                                     الإرسال عند أي طول — الحدّ الأدنى حُذف عمدًا. -->
+                                <div class="fb-strength" id="fb-strength">
+                                    <span class="fb-strength-bar" aria-hidden="true"><i></i></span>
+                                    <span class="fb-strength-word" id="fb-strength-word">اكتب ما حدث بكلماتك</span>
+                                </div>
+
+                                <div class="fb-meter">
+                                    <span class="fb-slice" id="fb-slice">—</span>
+                                </div>
+
+                                <div class="fb-actions">
+                                    <label class="fb-attach">
+                                        <input type="file" id="fb-image" accept="image/*" hidden>
+                                        <span>أرفق صورة</span>
+                                    </label>
+                                    <button type="submit" class="fb-submit" id="fb-submit">أرسل البلاغ</button>
+                                </div>
+
+                                <div class="fb-thumb" id="fb-thumb" hidden>
+                                    <img alt="معاينة الصورة المرفقة" id="fb-thumb-img">
+                                    <button type="button" class="fb-thumb-x" id="fb-thumb-x" aria-label="إزالة الصورة">✕</button>
+                                </div>
+
+                                <p class="fb-status" id="fb-status" role="status" aria-live="polite"></p>
+                            </form>
+                        </div>
+
+                        <!-- Suggest -->
+                        <div class="fb-card" style="--delay: 0.18s;">
+                            <div class="fb-card-head">
+                                <span class="fb-kicker">IDEA</span>
+                                <h3 class="fb-title">اقترح فكرة</h3>
+                            </div>
+                            <p class="fb-card-desc">فكرةٌ للموقع كلّه أو للعبةٍ بعينها — لعبة جديدة، ميزة ناقصة، أيّ شيء خطر لك. وإن أحببت، قيّمنا معها.</p>
+
+                            <form class="fb-form" id="idea-form" novalidate>
+                                <label class="fb-field">
+                                    <span class="fb-label">عن ماذا؟</span>
+                                    <select id="idea-game" class="fb-select"></select>
+                                </label>
+
+                                <div class="fb-field">
+                                    <span class="fb-label">تقييمك <span class="fb-optional">(اختياري)</span></span>
+                                    <div class="fb-stars" id="idea-stars" role="radiogroup" aria-label="تقييمك من خمس نجوم">
+                                        <button type="button" class="fb-star" data-star="1" role="radio" aria-checked="false" aria-label="نجمة واحدة">★</button>
+                                        <button type="button" class="fb-star" data-star="2" role="radio" aria-checked="false" aria-label="نجمتان">★</button>
+                                        <button type="button" class="fb-star" data-star="3" role="radio" aria-checked="false" aria-label="ثلاث نجوم">★</button>
+                                        <button type="button" class="fb-star" data-star="4" role="radio" aria-checked="false" aria-label="أربع نجوم">★</button>
+                                        <button type="button" class="fb-star" data-star="5" role="radio" aria-checked="false" aria-label="خمس نجوم">★</button>
+                                        <span class="fb-star-note" id="idea-stars-note"></span>
+                                    </div>
+                                </div>
+
+                                <label class="fb-field">
+                                    <span class="fb-label-row">
+                                        <span class="fb-label">ما اقتراحك؟</span>
+                                        <button type="button" class="fb-mic" data-mic="idea-text" aria-pressed="false" title="اكتب بصوتك: يبقى المايك مفتوحًا حتى توقفه بنفسك" hidden><span class="fb-mic-dot" aria-hidden="true"></span><span class="fb-mic-text">اكتب بصوتك</span></button>
+                                    </span>
+                                    <textarea id="idea-text" rows="5" maxlength="1200" placeholder="مثال: أضيفوا لعبة أمثال شعبية، أو خلّوا التلميح يشرح ليش الحرف غلط"></textarea>
+                                    <span class="fb-mic-hint" data-hint-for="idea-text" role="status" aria-live="polite" hidden></span>
+                                </label>
+
+                                <div class="fb-actions">
+                                    <button type="submit" class="fb-submit" id="idea-submit">أرسل الاقتراح</button>
+                                </div>
+                                <p class="fb-status" id="idea-status" role="status" aria-live="polite"></p>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- تذييلُ الموقع: نسبةٌ وسياسة، ولا شيء ثالث.
+                     موضعُه آخرُ صفحةٍ في الترتيب — الصفحةُ التي فيها البلاغُ
+                     والاقتراح — لأنّ من وصل إليها هو من يبحث عن «مَن وراء هذا»
+                     و«ماذا تفعلون ببياناتي». وتكرارُه على الصفحات الثلاث كان
+                     سيضاعف عقدَ المستند بلا مقابل. -->
+                <footer class="sura-foot">
+                    <!-- الشعارُ وحدَه يحمل النسبة. و`aria-label` يقول ما لا يقوله
+                         الشكل: قارئُ الشاشة يسمع الاسم كاملًا. -->
+                    <a class="sura-foot__in" href="https://www.linkedin.com/in/khalidabdullahalzahem"
+                       target="_blank" rel="noopener noreferrer"
+                       aria-label="خالد عبدالله الزاحم على LinkedIn">
+                        <svg class="sura-foot__in-mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.05c.53-.95 1.83-1.95 3.76-1.95C20.3 8.75 21 11 21 14.1V21h-4v-6.1c0-1.46-.03-3.35-2.04-3.35-2.04 0-2.36 1.6-2.36 3.25V21H9z"/></svg>
+                        <span>LinkedIn</span>
+                    </a>
+                    <a class="sura-foot__privacy" href="/privacy.html">سياسة الخصوصيّة</a>
+                </footer>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Sura: auth modal styling (no floating widget; uses existing nav #login-button) -->
+    <style>
+        #auth-modal [hidden] { display: none !important; }
+        #account-modal [hidden] { display: none !important; }
+        .nav-actions [hidden] { display: none !important; }
+        .sura-user-name { font-weight: 600; max-width: 12ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        .auth-container {
+            width: min(420px, 92vw);
+            background: rgba(15, 23, 42, 0.92);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 2rem 1.75rem 1.5rem;
+            box-shadow: var(--glass-shadow), 0 20px 60px rgba(0,0,0,0.5);
+            position: relative;
+        }
+        .auth-container h2 { margin: 0 0 0.25rem; font-size: 1.6rem; }
+        .auth-container .auth-sub { color: rgba(248, 250, 252, 0.65); font-size: 0.92rem; margin-bottom: 1.25rem; }
+        .auth-container .auth-tabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+        .auth-container .auth-tab {
+            flex: 1; padding: 0.55rem 0.5rem; border-radius: 10px;
+            background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border);
+            color: var(--clr-text-main); cursor: pointer; font-family: inherit; font-size: 0.88rem;
+            transition: var(--transition-smooth);
+        }
+        .auth-container .auth-tab.active {
+            background: linear-gradient(135deg, var(--clr-brand-primary), var(--clr-brand-secondary));
+            border-color: transparent; color: #1a1107; font-weight: 600;
+        }
+        .auth-container .auth-field { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 0.9rem; }
+        .auth-container .auth-field label { font-size: 0.82rem; color: rgba(248,250,252,0.75); }
+        .auth-container .auth-field input {
+            background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border);
+            border-radius: 10px; padding: 0.7rem 0.85rem; color: var(--clr-text-main);
+            font-family: inherit; font-size: 0.95rem; transition: var(--transition-smooth);
+            direction: ltr; text-align: right;
+        }
+        .auth-container .auth-field input:focus {
+            outline: none; border-color: var(--clr-brand-primary);
+            box-shadow: 0 0 0 3px rgba(255, 126, 95, 0.15);
+        }
+        .auth-container .auth-hint { font-size: 0.76rem; color: rgba(248,250,252,0.55); margin-top: 0.3rem; }
+        /* Email chip: shows the address chosen at the gate + a way back to change it */
+        .auth-emailchip {
+            display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;
+            background: rgba(201,162,39,0.10); border: 1px solid rgba(201,162,39,0.32);
+            border-radius: 10px; padding: 0.5rem 0.75rem; margin-bottom: 0.9rem;
+        }
+        .auth-emailchip__val { font-weight: 600; font-size: 0.86rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .auth-emailchip .auth-link { flex: none; white-space: nowrap; }
+        /* Merged (email-first) mode: the email is captured at the gate, so the
+           sign-in email field, the wizard's email step, and the old tab strip are
+           redundant. The email chip + "change" link replace them. */
+        #auth-modal.merged .auth-tabs { display: none !important; }
+        #auth-modal.merged #signin-email-field { display: none !important; }
+        #auth-modal.merged #auth-signup-form .wiz-step[data-step="1"] { display: none !important; }
+        #auth-modal.merged #auth-signup-form .wiz-step[data-step="2"] .wiz-back { display: none !important; }
+        .auth-container .auth-error {
+            background: rgba(220, 38, 38, 0.12); border: 1px solid rgba(220, 38, 38, 0.4);
+            color: #fca5a5; padding: 0.6rem 0.85rem; border-radius: 10px;
+            font-size: 0.85rem; margin-bottom: 0.9rem; display: none;
+        }
+        .auth-container .auth-error.visible { display: block; }
+        .auth-container .auth-success {
+            background: rgba(34, 197, 94, 0.12); border: 1px solid rgba(34, 197, 94, 0.4);
+            color: #86efac; padding: 0.6rem 0.85rem; border-radius: 10px;
+            font-size: 0.85rem; margin-bottom: 0.9rem; display: none;
+        }
+        .auth-container .auth-success.visible { display: block; }
+        .auth-container .auth-submit {
+            width: 100%; padding: 0.85rem; border-radius: 12px; border: none;
+            background: linear-gradient(135deg, var(--clr-brand-primary), var(--clr-brand-secondary));
+            color: #1a1107; font-family: inherit; font-size: 1rem; font-weight: 700;
+            cursor: pointer; transition: var(--transition-smooth);
+        }
+        .auth-container .auth-submit:hover { transform: translateY(-1px); }
+        .auth-container .auth-submit[disabled] { opacity: 0.6; cursor: progress; transform: none; }
+        .auth-container .auth-foot { text-align: center; margin-top: 1rem; font-size: 0.85rem; }
+        .auth-container .auth-link {
+            background: none; border: none; color: var(--clr-brand-secondary);
+            cursor: pointer; font-family: inherit; font-size: inherit; padding: 0; text-decoration: underline;
+        }
+        .auth-container .pw-wrap { position: relative; display: block; }
+        .auth-container .pw-wrap input { width: 100%; padding-left: 4rem; }
+        .auth-container .pw-toggle {
+            position: absolute; left: 0.55rem; top: 50%; transform: translateY(-50%);
+            background: none; border: none; color: rgba(248,250,252,0.6); cursor: pointer;
+            font-family: inherit; font-size: 0.8rem; padding: 0.25rem 0.4rem;
+        }
+        .auth-container .pw-strength {
+            height: 4px; border-radius: 2px; background: rgba(255,255,255,0.08);
+            margin-top: 0.35rem; overflow: hidden;
+        }
+        .auth-container .pw-strength-bar {
+            height: 100%; width: 0%; transition: width 0.25s ease, background-color 0.25s ease;
+            background: #ef4444;
+        }
+        /* Account settings modal */
+        #account-modal .auth-container { max-height: 88vh; overflow-y: auto; }
+        /* Auth (login/signup) modal: keep tall signup form scrollable inside the
+           overlay so it never bubbles the scroll to the home page behind it.
+           Top padding clears the misbaha navbar (--nav-h) so the card starts
+           below the beads instead of overlapping them. */
+        #auth-modal {
+            overflow-y: auto;
+            align-items: flex-start;
+            padding: calc(var(--nav-h, 82px) + 2.5rem) 0 4vh;
+        }
+        #auth-modal .auth-container {
+            max-height: calc(100vh - var(--nav-h, 82px) - 6rem);
+            overflow-y: auto;
+        }
+        .account-section { margin-top: 1.4rem; padding-top: 1.1rem; border-top: 1px solid rgba(255,255,255,0.08); }
+        .account-section h3 { font-size: 0.95rem; margin: 0 0 0.7rem; opacity: 0.9; }
+        .account-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }
+        .account-stats .stat-box { background: rgba(255,255,255,0.05); border-radius: 10px; padding: 0.6rem 0.3rem; text-align: center; }
+        .account-stats .stat-num { display: block; font-size: 1.35rem; font-weight: 700; }
+        .account-stats .stat-label { display: block; font-size: 0.7rem; opacity: 0.6; margin-top: 0.2rem; }
+        .account-standing { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.7rem 0 0.2rem; }
+        .account-standing.hidden { display: none; }
+        .account-standing .stand-chip { font-size: 0.8rem; padding: 0.3rem 0.7rem; border-radius: 999px; background: rgba(209,145,60,0.12); border: 1px solid rgba(209,145,60,0.28); }
+        .account-standing .stand-chip b { color: #E8B860; font-weight: 700; }
+        .account-verify-banner { background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.4); color: #fbbf24; border-radius: 10px; padding: 0.7rem 0.9rem; margin: 0.8rem 0 0.2rem; font-size: 0.85rem; display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; justify-content: space-between; }
+        .account-history .hist-row { display: flex; justify-content: space-between; font-size: 0.82rem; padding: 0.4rem 0; border-bottom: 1px dashed rgba(255,255,255,0.07); }
+        .account-history .hist-win { color: #34d399; }
+        .account-history .hist-loss { color: #f87171; }
+        .account-signout { display: block; margin: 1.5rem auto 0; color: #f87171; }
+        .auth-hint.ok { color: #34d399; }
+        .auth-hint.bad { color: #f87171; }
+    </style>
+
+    <!-- Sura: Auth modal (signup / signin / reset) -->
+    <div class="modal-backdrop" id="auth-modal" data-modal-solo role="dialog" aria-modal="true" aria-labelledby="auth-title">
+        <div class="auth-container">
+            <button class="modal-close" id="auth-modal-close" aria-label="إغلاق">&times;</button>
+            <h2 id="auth-title">مرحباً بك في سُرى</h2>
+            <p class="auth-sub" id="auth-subtitle">سجّل الدخول لحفظ تقدمك والظهور في لوحة المتصدرين</p>
+
+            <div class="auth-tabs" role="tablist">
+                <button type="button" class="auth-tab active" data-tab="signin" role="tab" aria-selected="true">دخول</button>
+                <button type="button" class="auth-tab" data-tab="signup" role="tab" aria-selected="false">تسجيل جديد</button>
+            </div>
+
+            <!-- One tap beats any form. Shown for both signin and signup (an OAuth
+                 identity is the same account either way), hidden on reset/OTP. -->
+            <div class="auth-oauth" id="auth-oauth">
+                <button type="button" class="oauth-btn" data-provider="google">
+                    <svg viewBox="0 0 18 18" width="17" height="17" aria-hidden="true" focusable="false">
+                        <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.91c1.7-1.57 2.69-3.88 2.69-6.62z"/>
+                        <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.91-2.26c-.81.54-1.84.86-3.05.86-2.35 0-4.34-1.58-5.05-3.71H.96v2.33A9 9 0 0 0 9 18z"/>
+                        <path fill="#FBBC05" d="M3.95 10.71a5.4 5.4 0 0 1 0-3.42V4.96H.96a9 9 0 0 0 0 8.08l2.99-2.33z"/>
+                        <path fill="#EA4335" d="M9 3.58c1.32 0 2.51.45 3.44 1.35l2.58-2.59C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.96l2.99 2.33C4.66 5.16 6.65 3.58 9 3.58z"/>
+                    </svg>
+                    <span>المتابعة عبر Google</span>
+                </button>
+                <div class="auth-or"><span>أو بالبريد الإلكتروني</span></div>
+            </div>
+
+            <div class="auth-error" id="auth-error" role="alert"></div>
+            <div class="auth-success" id="auth-success" role="status"></div>
+
+            <!-- Email gate: a single field decides sign-in vs. register. The
+                 email_available RPC tells us whether the address already has an
+                 account; we then route to the sign-in form or the sign-up wizard. -->
+            <form id="auth-gate-form" autocomplete="on" novalidate>
+                <div class="auth-field">
+                    <label for="gate-email">البريد الإلكتروني</label>
+                    <input type="email" id="gate-email" name="email" autocomplete="email" inputmode="email" required maxlength="254" />
+                    <div class="auth-hint">أدخل بريدك للمتابعة — سنعرف إن كان لديك حساب.</div>
+                </div>
+                <button type="submit" class="auth-submit" id="auth-gate-submit">متابعة ←</button>
+            </form>
+
+            <!-- Chosen-email chip — shown once we've moved past the gate, with a
+                 way back to change the address. -->
+            <div class="auth-emailchip" id="auth-emailchip" hidden>
+                <span class="auth-emailchip__val" id="auth-emailchip-val" dir="ltr"></span>
+                <button type="button" class="auth-link" id="auth-emailchip-change">← تغيير البريد</button>
+            </div>
+
+            <!-- Sign in -->
+            <form id="auth-signin-form" autocomplete="on" novalidate hidden>
+                <div class="auth-field" id="signin-email-field">
+                    <label for="signin-email">البريد الإلكتروني</label>
+                    <input type="email" id="signin-email" name="email" autocomplete="email" inputmode="email" required maxlength="254" />
+                </div>
+                <div class="auth-field">
+                    <label for="signin-password">كلمة المرور</label>
+                    <div class="pw-wrap">
+                        <input type="password" id="signin-password" name="current-password" autocomplete="current-password" required minlength="8" maxlength="128" />
+                        <button type="button" class="pw-toggle" data-target="signin-password" aria-label="إظهار كلمة المرور">إظهار</button>
+                    </div>
+                </div>
+                <button type="submit" class="auth-submit" id="auth-signin-submit">دخول</button>
+                <div class="auth-foot">
+                    <button type="button" class="auth-link" id="auth-forgot-link">نسيت كلمة المرور؟</button>
+                    <span style="opacity:0.5;margin: 0 0.5rem;">·</span>
+                    <button type="button" class="auth-link" id="auth-verify-link">تحقق ببريدك (رمز)</button>
+                </div>
+                <div class="auth-foot" id="auth-signin-cross" hidden>
+                    <button type="button" class="auth-link" id="auth-to-signup">ليس لديك حساب؟ أنشئ واحداً بهذا البريد</button>
+                </div>
+            </form>
+
+            <!-- Sign up — one question per screen.
+                 The old form asked for five fields at once (name, username, email,
+                 password, confirm) before a stranger had any reason to trust us.
+                 Now: email, then username, then password. The display name is
+                 seeded from the username and editable later, and the confirm field
+                 is gone — the show/hide toggle does that job without a fifth box. -->
+            <form id="auth-signup-form" autocomplete="on" novalidate hidden>
+                <div class="wiz-dots" aria-hidden="true">
+                    <span class="wiz-dot on"></span><span class="wiz-dot"></span><span class="wiz-dot"></span>
+                </div>
+
+                <!-- Step 1 — email -->
+                <div class="wiz-step" data-step="1">
+                    <div class="auth-field">
+                        <label for="signup-email">البريد الإلكتروني</label>
+                        <input type="email" id="signup-email" name="email" autocomplete="email" inputmode="email" required maxlength="254" />
+                        <div class="auth-hint">نستخدمه لاستعادة حسابك فقط.</div>
+                    </div>
+                    <button type="button" class="auth-submit wiz-next" data-goto="2">التالي ←</button>
+                </div>
+
+                <!-- Step 2 — username -->
+                <div class="wiz-step" data-step="2" hidden>
+                    <div class="auth-field">
+                        <label for="signup-username">اسم المستخدم</label>
+                        <input type="text" id="signup-username" name="username" autocomplete="username" required minlength="3" maxlength="20" pattern="[A-Za-z0-9_]{3,20}" inputmode="latin" style="direction:ltr;text-align:left;" placeholder="player_99" />
+                        <div class="auth-hint" id="signup-username-hint">حروف إنجليزية وأرقام و«_» فقط (3–20). يظهر في لوحة المتصدرين.</div>
+                    </div>
+                    <button type="button" class="auth-submit wiz-next" data-goto="3">التالي ←</button>
+                    <button type="button" class="auth-link wiz-back" data-goto="1">→ رجوع</button>
+                </div>
+
+                <!-- Step 3 — password -->
+                <div class="wiz-step" data-step="3" hidden>
+                    <div class="auth-field">
+                        <label for="signup-password">كلمة المرور</label>
+                        <div class="pw-wrap">
+                            <input type="password" id="signup-password" name="new-password" autocomplete="new-password" required minlength="8" maxlength="128" />
+                            <button type="button" class="pw-toggle" data-target="signup-password" aria-label="إظهار كلمة المرور">إظهار</button>
+                        </div>
+                        <div class="pw-strength" aria-hidden="true"><div class="pw-strength-bar" id="pw-strength-bar"></div></div>
+                        <div class="auth-hint">8 أحرف على الأقل.</div>
+                    </div>
+                    <button type="submit" class="auth-submit" id="auth-signup-submit">إنشاء حساب</button>
+                    <button type="button" class="auth-link wiz-back" data-goto="2">→ رجوع</button>
+                </div>
+
+                <div class="auth-foot" id="auth-signup-cross" hidden>
+                    <button type="button" class="auth-link" id="auth-to-signin">لديك حساب بهذا البريد؟ سجّل الدخول</button>
+                </div>
+            </form>
+
+            <!-- OTP verification -->
+            <form id="auth-otp-form" autocomplete="off" novalidate hidden>
+                <div class="auth-field">
+                    <label for="otp-email">البريد الإلكتروني</label>
+                    <input type="email" id="otp-email" name="email" autocomplete="email" inputmode="email" required maxlength="254" />
+                </div>
+                <div class="auth-field">
+                    <label for="otp-code">رمز التحقق</label>
+                    <input type="text" id="otp-code" name="otp" autocomplete="one-time-code" inputmode="numeric" pattern="\d{6,8}" minlength="6" maxlength="8" required style="letter-spacing:0.5em;text-align:center;font-size:1.2rem;direction:ltr;" placeholder="••••••••" />
+                    <div class="auth-hint">أدخل الرمز الذي وصلك في البريد. تحقق من مجلد الـ Spam.</div>
+                </div>
+                <button type="submit" class="auth-submit" id="auth-otp-submit">تحقق</button>
+                <div class="auth-foot">
+                    <button type="button" class="auth-link" id="auth-resend-otp">إعادة إرسال الرمز</button>
+                    <span style="opacity:0.5;margin: 0 0.5rem;">·</span>
+                    <button type="button" class="auth-link" id="auth-otp-back">عودة</button>
+                </div>
+            </form>
+
+            <!-- Reset -->
+            <form id="auth-reset-form" autocomplete="on" novalidate hidden>
+                <div class="auth-field">
+                    <label for="reset-email">البريد الإلكتروني</label>
+                    <input type="email" id="reset-email" name="email" autocomplete="email" inputmode="email" required maxlength="254" />
+                    <div class="auth-hint">سنرسل لك رابط إعادة تعيين كلمة المرور.</div>
+                </div>
+                <button type="submit" class="auth-submit" id="auth-reset-submit">إرسال الرابط</button>
+                <div class="auth-foot">
+                    <button type="button" class="auth-link" id="auth-back-signin">العودة لتسجيل الدخول</button>
+                </div>
+            </form>
+            <!-- Set new password (shown after clicking the recovery email link) -->
+            <form id="auth-newpw-form" autocomplete="off" novalidate hidden>
+                <div class="auth-field">
+                    <label for="newpw-password">كلمة المرور الجديدة</label>
+                    <div class="pw-wrap">
+                        <input type="password" id="newpw-password" name="new-password" autocomplete="new-password" required minlength="8" maxlength="128" />
+                        <button type="button" class="pw-toggle" data-target="newpw-password" aria-label="إظهار كلمة المرور">إظهار</button>
+                    </div>
+                    <div class="auth-hint">8 أحرف على الأقل.</div>
+                </div>
+                <div class="auth-field">
+                    <label for="newpw-password-confirm">تأكيد كلمة المرور</label>
+                    <div class="pw-wrap">
+                        <input type="password" id="newpw-password-confirm" name="confirm-password" autocomplete="new-password" required minlength="8" maxlength="128" />
+                        <button type="button" class="pw-toggle" data-target="newpw-password-confirm" aria-label="إظهار كلمة المرور">إظهار</button>
+                    </div>
+                    <div class="auth-hint" id="newpw-match-hint"></div>
+                </div>
+                <button type="submit" class="auth-submit" id="auth-newpw-submit">تحديث كلمة المرور</button>
+            </form>
+
+            <!-- Claim a username — the MANDATORY step after a Google sign-in.
+                 Google sends `full_name` and no username, so handle_new_user
+                 writes the profile with `username = NULL` (see
+                 supabase/sql/db-security-definer.sql). Nothing asked for one
+                 afterwards, so an OAuth player kept a null username forever and
+                 appeared on the leaderboard under whatever Google called them.
+                 This view is shown by main.js whenever a signed-in profile has no
+                 username, and while it is open the modal cannot be dismissed —
+                 no close button, no backdrop click, no Escape. That is the point
+                 of it; a skippable required field is not required. -->
+            <form id="auth-claim-form" autocomplete="off" novalidate hidden>
+                <p class="auth-hint" id="auth-claim-intro">أهلاً بك في سُرى. اختر اسم مستخدم يظهر في لوحة المتصدرين.</p>
+                <div class="auth-field">
+                    <label for="claim-username">اسم المستخدم</label>
+                    <input type="text" id="claim-username" name="username" autocomplete="username" required minlength="3" maxlength="20" pattern="[A-Za-z0-9_]{3,20}" inputmode="latin" style="direction:ltr;text-align:left;" placeholder="player_99" />
+                    <div class="auth-hint" id="claim-username-hint">حروف إنجليزية وأرقام و«_» فقط (3–20).</div>
+                </div>
+                <button type="submit" class="auth-submit" id="auth-claim-submit">تأكيد الاسم</button>
+                <!-- The one way out. A locked modal with no exit is a trap: a
+                     player who changes their mind about signing up would other-
+                     wise have to close the tab, and would come back to the same
+                     lock. Signing out ends the session, so the lock has nothing
+                     left to guard. -->
+                <button type="button" class="auth-link" id="auth-claim-signout">تسجيل الخروج</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Sura: Display & accessibility settings modal -->
+    <div class="modal-backdrop" id="settings-modal" data-modal-solo role="dialog" aria-modal="true" aria-labelledby="settings-title">
+        <div class="auth-container settings-container">
+            <button class="modal-close" id="settings-modal-close" aria-label="إغلاق">&times;</button>
+            <h2 id="settings-title">العرض وإمكانية الوصول</h2>
+            <p class="auth-sub">اضبط حجم الخط ونوعه واللون بما يريح عينيك. تُحفظ تلقائيًا.</p>
+
+            <div class="account-section">
+                <h3>حجم الخط</h3>
+                <div class="seg-control" data-pref="fontScale">
+                    <button type="button" data-val="1">صغير</button>
+                    <button type="button" data-val="1.15">متوسط</button>
+                    <button type="button" data-val="1.3">كبير</button>
+                    <button type="button" data-val="1.5">ضخم</button>
+                </div>
+                <div class="zoom-row">
+                    <button type="button" class="zoom-btn" id="settings-zoom-out" aria-label="تصغير">−A</button>
+                    <span class="zoom-label" id="settings-zoom-label">100%</span>
+                    <button type="button" class="zoom-btn" id="settings-zoom-in" aria-label="تكبير">A+</button>
+                </div>
+            </div>
+
+            <div class="account-section">
+                <h3>نوع الخط</h3>
+                <div class="seg-control" data-pref="fontFamily">
+                    <button type="button" data-val="reem">ريم كوفي</button>
+                    <button type="button" data-val="tajawal">تجوّل (أوضح)</button>
+                    <button type="button" data-val="naskh">نسخ</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Sura: Per-game rules explainer modal -->
+    <div class="modal-backdrop" id="rules-modal" role="dialog" aria-modal="true" aria-labelledby="rules-title">
+        <div class="auth-container">
+            <button class="modal-close" id="rules-modal-close" aria-label="إغلاق">&times;</button>
+            <h2 id="rules-title" class="rules-title-row">شرح اللعبة</h2>
+            <p class="rules-body" id="rules-body"></p>
+        </div>
+    </div>
+
+    <!-- Sura: Account settings modal -->
+    <div class="modal-backdrop" id="account-modal" data-modal-solo role="dialog" aria-modal="true" aria-labelledby="account-title">
+        <div class="auth-container">
+            <button class="modal-close" id="account-modal-close" aria-label="إغلاق">&times;</button>
+            <h2 id="account-title">حسابي</h2>
+            <p class="auth-sub" id="account-greeting"></p>
+
+            <div class="auth-error" id="account-error" role="alert"></div>
+            <div class="auth-success" id="account-success" role="status"></div>
+
+            <!-- Verify-email banner (unverified accounts) -->
+            <div class="account-verify-banner" id="account-verify-banner" hidden>
+                <span>بريدك غير مُفعّل بعد — فعّله لتتمكن من اللعب وحفظ تقدمك.</span>
+                <button type="button" class="auth-link" id="account-verify-now">تفعيل الآن (رمز)</button>
+            </div>
+
+            <!-- Stats -->
+            <div class="account-section">
+                <h3>إحصائياتي</h3>
+                <div class="account-stats" id="account-stats">
+                    <div class="stat-box"><span class="stat-num" id="stat-played">—</span><span class="stat-label">لعبت</span></div>
+                    <div class="stat-box"><span class="stat-num" id="stat-wins">—</span><span class="stat-label">فوز</span></div>
+                    <div class="stat-box"><span class="stat-num" id="stat-streak">—</span><span class="stat-label">السلسلة</span></div>
+                    <div class="stat-box"><span class="stat-num" id="stat-best">—</span><span class="stat-label">أفضل سلسلة</span></div>
+                </div>
+            </div>
+
+            <!-- Level / XP + badges -->
+            <div class="account-section">
+                <h3>المستوى والأوسمة</h3>
+                <div class="xp-row">
+                    <span class="xp-level" id="account-level">المستوى 1</span>
+                    <span class="xp-pts" id="account-xp">0 نقطة خبرة</span>
+                </div>
+                <div class="xp-bar"><i id="account-xp-fill" style="width:0%"></i></div>
+                <!-- Authoritative global standing (server-owned, unified across
+                     devices, identical to the global leaderboard ranking). Hidden
+                     until the player has server-side progress. -->
+                <div class="account-standing hidden" id="account-standing">
+                    <span class="stand-chip" id="standing-rank">—</span>
+                    <span class="stand-chip" id="standing-global">—</span>
+                    <span class="stand-chip" id="standing-games">—</span>
+                </div>
+                <div class="badge-shelf" id="account-badges"></div>
+            </div>
+
+            <!-- Username -->
+            <div class="account-section">
+                <h3>اسم المستخدم</h3>
+                <form id="account-username-form" autocomplete="off" novalidate>
+                    <div class="auth-field">
+                        <input type="text" id="account-username" name="username" minlength="3" maxlength="20" pattern="[A-Za-z0-9_]{3,20}" inputmode="latin" style="direction:ltr;text-align:left;" placeholder="player_99" />
+                        <div class="auth-hint" id="account-username-hint">حروف إنجليزية وأرقام و«_» فقط (3–20).</div>
+                    </div>
+                    <button type="submit" class="auth-submit" id="account-username-submit">حفظ اسم المستخدم</button>
+                </form>
+            </div>
+
+            <!-- Change password -->
+            <div class="account-section">
+                <h3>تغيير كلمة المرور</h3>
+                <form id="account-password-form" autocomplete="off" novalidate>
+                    <div class="auth-field">
+                        <label for="account-new-password">كلمة المرور الجديدة</label>
+                        <div class="pw-wrap">
+                            <input type="password" id="account-new-password" name="new-password" autocomplete="new-password" minlength="8" maxlength="128" />
+                            <button type="button" class="pw-toggle" data-target="account-new-password" aria-label="إظهار كلمة المرور">إظهار</button>
+                        </div>
+                        <div class="auth-hint" id="account-pw-req-hint">8 أحرف على الأقل.</div>
+                    </div>
+                    <div class="auth-field">
+                        <label for="account-new-password-confirm">تأكيد كلمة المرور</label>
+                        <div class="pw-wrap">
+                            <input type="password" id="account-new-password-confirm" name="confirm-password" autocomplete="new-password" minlength="8" maxlength="128" />
+                            <button type="button" class="pw-toggle" data-target="account-new-password-confirm" aria-label="إظهار كلمة المرور">إظهار</button>
+                        </div>
+                        <div class="auth-hint" id="account-pw-match-hint"></div>
+                    </div>
+                    <button type="submit" class="auth-submit" id="account-password-submit">تحديث كلمة المرور</button>
+                </form>
+            </div>
+
+            <!-- Recent games -->
+            <div class="account-section">
+                <h3>آخر ما لعبت</h3>
+                <div class="account-history" id="account-history"><p class="auth-hint">لا يوجد سجل بعد.</p></div>
+            </div>
+
+            <button type="button" class="auth-link account-signout" id="account-signout">تسجيل الخروج</button>
+        </div>
+    </div>
+
+    <!-- Playable Arabic Wordle Lightbox Modal -->
+    <div class="modal-backdrop" id="wordle-modal">
+        <div class="wordle-modal-container">
+            <button class="modal-close" id="wordle-modal-close" aria-label="أغلق اللعبة">&times;</button>
+            
+            <div class="wordle-game-wrapper">
+                <!-- Wordle Header -->
+                <div class="wordle-header">
+                    <h2>لعبة كَلِمة</h2>
+                    <p id="wordle-subtitle">خمّن الكلمة العربية في 6 محاولات</p>
+                </div>
+                
+                <!-- Wordle Grid -->
+                <div class="wordle-board" id="wordle-board">
+                    <!-- Rows rendered via JS -->
+                </div>
+
+                <!-- Messages/Feedback Toast -->
+                <div class="wordle-message" id="wordle-message"></div>
+
+                <!-- On Screen Keyboard -->
+                <div class="wordle-keyboard" id="wordle-keyboard">
+                    <!-- Key rows rendered via JS -->
+                </div>
+
+                <!-- Play Again / Share actions (hidden initially) -->
+                <div class="wordle-actions hidden" id="wordle-actions">
+                    <button class="btn-primary" id="wordle-restart-btn">العب مجدداً</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Connections (تشابك) Modal -->
+    <div class="modal-backdrop" id="connections-modal">
+        <div class="wordle-modal-container game-modal-container">
+            <button class="modal-close" id="connections-modal-close" aria-label="أغلق اللعبة">&times;</button>
+            <div class="wordle-game-wrapper">
+                <div class="wordle-header">
+                    <h2>تشابك</h2>
+                    <p>اعثر على أربع مجموعات من أربع كلمات يجمعها رابط مشترك</p>
+                </div>
+                <div class="conn-solved" id="connections-solved"></div>
+                <div class="conn-grid" id="connections-board"></div>
+                <div class="wordle-message" id="connections-message"></div>
+                <div class="conn-lives" id="connections-lives"></div>
+                <div class="conn-controls">
+                    <button class="conn-btn" id="connections-shuffle">خلط</button>
+                    <button class="conn-btn" id="connections-deselect">إلغاء التحديد</button>
+                    <button class="conn-btn primary" id="connections-submit" disabled>تحقق</button>
+                </div>
+                <div class="wordle-actions hidden" id="connections-actions">
+                    <button class="btn-primary" id="connections-share-btn">شارك النتيجة</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sudoku (سودوكو) Modal -->
+    <template id="tpl-sudoku-modal"><div class="modal-backdrop" id="sudoku-modal">
+        <div class="wordle-modal-container game-modal-container">
+            <button class="modal-close" id="sudoku-modal-close" aria-label="أغلق اللعبة">&times;</button>
+            <div class="wordle-game-wrapper">
+                <div class="wordle-header">
+                    <h2>سودوكو</h2>
+                    <p>املأ الشبكة بحيث لا يتكرر رقم في صف أو عمود أو مربع</p>
+                </div>
+                <div class="sudoku-timebar"><span class="sudoku-time-label">الوقت</span><span id="sudoku-timer">0:00</span></div>
+                <div class="sudoku-board" id="sudoku-board"></div>
+                <div class="wordle-message" id="sudoku-message"></div>
+                <div class="sudoku-pad" id="sudoku-pad"></div>
+                <div class="conn-controls">
+                    <button class="conn-btn" id="sudoku-notes">ملاحظات</button>
+                    <button class="conn-btn" id="sudoku-erase">مسح</button>
+                </div>
+                <div class="wordle-actions hidden" id="sudoku-actions">
+                    <button class="btn-primary" id="sudoku-share-btn">شارك النتيجة</button>
+                    <button class="conn-btn" id="sudoku-new-btn">لوحة جديدة</button>
+                </div>
+            </div>
+        </div>
+    </div></template>
+
+    <!-- Spelling Bee (نحلة الإملاء) Modal -->
+    <div class="modal-backdrop" id="bee-modal">
+        <div class="wordle-modal-container game-modal-container">
+            <button class="modal-close" id="bee-modal-close" aria-label="أغلق اللعبة">&times;</button>
+            <div class="wordle-game-wrapper">
+                <div class="wordle-header">
+                    <h2>نحلة الإملاء</h2>
+                    <p>كوّن كلمات من 4 حروف فأكثر، ويجب أن تحتوي الحرف الأوسط</p>
+                </div>
+                <div class="bee-rankbar">
+                    <span class="bee-rank" id="bee-rank">مبتدئ · 0</span>
+                    <div class="bee-progress"><div class="bee-progress-fill" id="bee-progress-fill"></div></div>
+                </div>
+                <div class="bee-word" id="bee-word"><span class="wc-ph">اكتب كلمة…</span></div>
+                <div class="wordle-message" id="bee-message"></div>
+                <div class="bee-hive" id="bee-hive"></div>
+                <div class="conn-controls">
+                    <button class="conn-btn" id="bee-delete">حذف</button>
+                    <button class="conn-btn" id="bee-shuffle">خلط</button>
+                    <button class="conn-btn primary" id="bee-enter">أدخِل</button>
+                </div>
+                <div class="bee-found-head">الكلمات التي وجدتها (<span id="bee-found-count">0</span>)</div>
+                <div class="bee-found" id="bee-found"></div>
+                <div class="wordle-actions hidden" id="bee-actions">
+                    <button class="btn-primary" id="bee-share-btn">شارك النتيجة</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Letter Boxed (صندوق الحروف) Modal -->
+    <template id="tpl-letterboxed-modal"><div class="modal-backdrop" id="letterboxed-modal">
+        <div class="wordle-modal-container game-modal-container">
+            <button class="modal-close" id="lb-modal-close" aria-label="أغلق اللعبة">&times;</button>
+            <div class="wordle-game-wrapper">
+                <div class="wordle-header">
+                    <h2>صندوق الحروف</h2>
+                    <p>كوّن كلمات من حروف الصندوق — لا تختر حرفين من الجهة نفسها، وابدأ كل كلمة بآخر حرف من سابقتها، حتى تستخدم كل الحروف</p>
+                </div>
+                <div class="lb-theme" id="lb-theme" hidden></div>
+                <div class="lb-used" id="lb-used">0/12 حرفًا</div>
+                <div class="lb-box" id="lb-box"></div>
+                <div class="lb-word" id="lb-word"><span class="wc-ph">كوّن كلمة…</span></div>
+                <div class="wordle-message" id="lb-message"></div>
+                <div class="lb-chain" id="lb-chain"></div>
+                <div class="conn-controls">
+                    <button class="conn-btn" id="lb-delete">حذف</button>
+                    <button class="conn-btn" id="lb-restart">امسح الكلمة</button>
+                    <button class="conn-btn primary" id="lb-enter">أدخِل</button>
+                </div>
+                <div class="wordle-actions hidden" id="lb-actions">
+                    <button class="btn-primary" id="lb-share-btn">شارك النتيجة</button>
+                    <button class="conn-btn" id="lb-new-btn">لغز جديد</button>
+                </div>
+            </div>
+        </div>
+    </div></template>
+
+    <!-- Strands (خيوط) Modal -->
+    <template id="tpl-strands-modal"><div class="modal-backdrop" id="strands-modal">
+        <div class="wordle-modal-container game-modal-container">
+            <button class="modal-close" id="strands-modal-close" aria-label="أغلق اللعبة">&times;</button>
+            <div class="wordle-game-wrapper">
+                <div class="wordle-header">
+                    <h2>خيوط</h2>
+                    <p>تتبّع كلمات الموضوع المخفية في الشبكة — اضغط الحروف المتجاورة لتكوين مسار الكلمة</p>
+                </div>
+                <div class="strands-topbar">
+                    <span class="strands-theme-label">الموضوع: <b id="strands-theme">…</b></span>
+                    <span class="strands-prog" id="strands-progress">0/0</span>
+                </div>
+                <div class="strands-board" id="strands-board"></div>
+                <div class="wordle-message" id="strands-message"></div>
+                <div class="conn-controls">
+                    <button class="conn-btn" id="strands-clear">مسح المسار</button>
+                </div>
+                <div class="wordle-actions hidden" id="strands-actions">
+                    <button class="btn-primary" id="strands-share-btn">شارك النتيجة</button>
+                    <button class="conn-btn" id="strands-new-btn">لغز جديد</button>
+                </div>
+            </div>
+        </div>
+    </div></template>
+
+    <!-- أمثال (Proverbs) Modal -->
+    <div class="modal-backdrop" id="amthal-modal">
+        <div class="wordle-modal-container game-modal-container">
+            <button class="modal-close" id="amthal-modal-close" aria-label="أغلق اللعبة">&times;</button>
+            <div class="wordle-game-wrapper">
+                <div class="wordle-header">
+                    <h2>أمثال</h2>
+                    <p>اكتب المثل الشعبي كاملًا مستعينًا بمعناه — صندوق لكل كلمة، والكلمة الصحيحة تُقفل بالأخضر</p>
+                </div>
+                <div class="amthal-meaning" id="amthal-meaning">💡 …</div>
+                <div class="strands-topbar">
+                    <span class="strands-prog">الكلمات: <b id="amthal-progress">0/0</b></span>
+                </div>
+                <div class="amthal-type" id="amthal-answer"></div>
+                <div class="wordle-message" id="amthal-message"></div>
+                <div class="conn-controls">
+                    <button class="conn-btn" id="amthal-clear">مسح</button>
+                    <button class="conn-btn primary" id="amthal-check">تحقّق</button>
+                </div>
+                <div class="wordle-actions hidden" id="amthal-actions">
+                    <button class="btn-primary" id="amthal-share-btn">شارك النتيجة</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- كلمة ناقصة (Missing Word) Modal -->
+    <template id="tpl-missingword-modal"><div class="modal-backdrop" id="missingword-modal">
+        <div class="wordle-modal-container game-modal-container">
+            <button class="modal-close" id="missingword-modal-close" aria-label="أغلق اللعبة">&times;</button>
+            <div class="wordle-game-wrapper">
+                <div class="wordle-header">
+                    <h2>كلمة ناقصة</h2>
+                    <p>أكمل العبارة باختيار الكلمة الناقصة الصحيحة من الخيارات</p>
+                </div>
+                <div class="amthal-meaning" id="missingword-prompt">…</div>
+                <div class="conn-controls" id="missingword-options"></div>
+                <div class="wordle-message" id="missingword-message"></div>
+                <div class="wordle-actions hidden" id="missingword-actions">
+                    <button class="btn-primary" id="missingword-share-btn">شارك النتيجة</button>
+                    <button class="conn-btn" id="missingword-new-btn">عبارة جديدة</button>
+                </div>
+            </div>
+        </div>
+    </div></template>
+
+    <!-- رتّب السالفة (Story Order) Modal -->
+    <template id="tpl-storyorder-modal"><div class="modal-backdrop" id="storyorder-modal">
+        <div class="wordle-modal-container game-modal-container">
+            <button class="modal-close" id="storyorder-modal-close" aria-label="أغلق اللعبة">&times;</button>
+            <div class="wordle-game-wrapper">
+                <div class="wordle-header">
+                    <h2>رتّب السالفة</h2>
+                    <p>رتّب أجزاء السالفة حسب تسلسلها المنطقي — السبب قبل النتيجة</p>
+                </div>
+                <div class="amthal-meaning" id="storyorder-title">…</div>
+                <div class="conn-controls" id="storyorder-order"></div>
+                <div class="conn-controls" id="storyorder-pool"></div>
+                <div class="conn-controls" id="storyorder-controls">
+                    <button class="conn-btn" id="storyorder-reset-btn">مسح</button>
+                    <button class="btn-primary" id="storyorder-submit-btn">تحقّق</button>
+                </div>
+                <div class="wordle-message" id="storyorder-message"></div>
+                <div class="wordle-actions hidden" id="storyorder-actions">
+                    <button class="btn-primary" id="storyorder-share-btn">شارك النتيجة</button>
+                    <button class="conn-btn" id="storyorder-new-btn">سالفة جديدة</button>
+                </div>
+            </div>
+        </div>
+    </div></template>
+
+    <!-- قرّبها (Warmer) Modal -->
+    <div class="modal-backdrop" id="warmer-modal">
+        <div class="wordle-modal-container game-modal-container">
+            <button class="modal-close" id="warmer-modal-close" aria-label="أغلق اللعبة">&times;</button>
+            <div class="wordle-game-wrapper">
+                <div class="wordle-header">
+                    <h2>قرّبها</h2>
+                    <p>خمّن الكلمة المخفية — كل تخمين يقول لك قد إيش قرّبت بالمعنى</p>
+                </div>
+                <div class="amthal-meaning" id="warmer-theme">…</div>
+                <div id="warmer-input-row" style="display:flex; gap:.5em; align-items:center; margin:.6em 0;">
+                    <input id="warmer-input" type="text" inputmode="text" autocomplete="off" placeholder="اكتب كلمة وخمّن…" style="flex:1; min-width:0; padding:.6em .8em; border:1px solid rgba(201,162,39,.5); border-radius:8px; background:rgba(0,0,0,.25); color:inherit; font-size:1.05em; text-align:right; direction:rtl;" />
+                    <button class="btn-primary" id="warmer-guess-btn">خمّن</button>
+                </div>
+                <div class="wordle-message" id="warmer-message"></div>
+                <div class="conn-controls" id="warmer-guesses"></div>
+                <div class="wordle-actions hidden" id="warmer-actions">
+                    <button class="btn-primary" id="warmer-share-btn">شارك النتيجة</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- لمحة (Lamha) Modal -->
+    <div class="modal-backdrop" id="lamha-modal">
+        <div class="wordle-modal-container game-modal-container">
+            <button class="modal-close" id="lamha-modal-close" aria-label="أغلق اللعبة">&times;</button>
+            <div class="wordle-game-wrapper">
+                <div class="wordle-header">
+                    <h2>لمحة</h2>
+                    <p>خمّن الكلمة من تلميحات تتكشّف — كل ما خمّنت أبكر، نجومك أكثر</p>
+                </div>
+                <div class="amthal-meaning" id="lamha-status">…</div>
+                <div id="lamha-clues"></div>
+                <div id="lamha-input-row" style="display:flex; gap:.5em; align-items:center; margin:.6em 0;">
+                    <input id="lamha-input" type="text" inputmode="text" autocomplete="off" placeholder="اكتب تخمينك…" style="flex:1; min-width:0; padding:.6em .8em; border:1px solid rgba(201,162,39,.5); border-radius:8px; background:rgba(0,0,0,.25); color:inherit; font-size:1.05em; text-align:right; direction:rtl;" />
+                    <button class="btn-primary" id="lamha-guess-btn">خمّن</button>
+                </div>
+                <button class="conn-btn" id="lamha-reveal-btn" style="width:100%; margin:.1em 0 .3em;">💡 اكشف التلميح التالي (−⭐)</button>
+                <div class="wordle-message" id="lamha-message"></div>
+                <div class="wordle-actions hidden" id="lamha-actions">
+                    <button class="btn-primary" id="lamha-share-btn">شارك النتيجة</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- زايد (Zayid) Modal -->
+    <template id="tpl-zayid-modal"><div class="modal-backdrop" id="zayid-modal">
+        <div class="wordle-modal-container game-modal-container">
+            <button class="modal-close" id="zayid-modal-close" aria-label="أغلق اللعبة">&times;</button>
+            <div class="wordle-game-wrapper">
+                <div class="wordle-header">
+                    <h2>زايد</h2>
+                    <p>زايد خصمك بعدد ما تقدر تذكر — واللي يستسلم، الثاني يثبت كلامه</p>
+                </div>
+                <div class="zayid-mode" id="zayid-mode"></div>
+                <div class="amthal-meaning" id="zayid-category">…</div>
+                <div class="zayid-score" id="zayid-score"></div>
+                <div class="zayid-bid" id="zayid-bid"></div>
+                <div class="zayid-rival" id="zayid-rival"></div>
+                <div class="zayid-prove hidden" id="zayid-prove"></div>
+                <div class="wordle-message" id="zayid-message"></div>
+                <div class="wordle-actions hidden" id="zayid-actions">
+                    <button class="btn-primary" id="zayid-share-btn">شارك النتيجة</button>
+                </div>
+            </div>
+        </div>
+    </div></template>
+
+    <!-- Tiles (زليج) Modal -->
+    <template id="tpl-tiles-modal"><div class="modal-backdrop" id="tiles-modal">
+        <div class="wordle-modal-container game-modal-container">
+            <button class="modal-close" id="tiles-modal-close" aria-label="أغلق اللعبة">&times;</button>
+            <div class="wordle-game-wrapper">
+                <div class="wordle-header">
+                    <h2>زليج</h2>
+                    <p>طابِق البلاطات المتشابهة لإفراغ اللوحة — تطابقات متتالية تبني سلسلة أطول</p>
+                </div>
+                <div class="strands-topbar">
+                    <span class="tiles-combo" id="tiles-combo">سلسلة: <b>×0</b></span>
+                    <span class="sudoku-timebar"><span class="sudoku-time-label">الوقت</span> <span id="tiles-timer">0:00</span></span>
+                </div>
+                <div class="tiles-board" id="tiles-board"></div>
+                <div class="wordle-message" id="tiles-message"></div>
+                <div class="wordle-actions hidden" id="tiles-actions">
+                    <button class="btn-primary" id="tiles-share-btn">شارك النتيجة</button>
+                    <button class="conn-btn" id="tiles-new-btn">لوحة جديدة</button>
+                </div>
+            </div>
+        </div>
+    </div></template>
+
+    <!-- Pips (نقاط) Modal -->
+    <template id="tpl-pips-modal"><div class="modal-backdrop" id="pips-modal">
+        <div class="wordle-modal-container game-modal-container">
+            <button class="modal-close" id="pips-modal-close" aria-label="أغلق اللعبة">&times;</button>
+            <div class="wordle-game-wrapper">
+                <div class="wordle-header">
+                    <h2>نقاط</h2>
+                    <p>ضع أحجار الدومينو لتتحقق شروط كل منطقة (مجموع النقاط = العدد، أو تساوي النقاط). اختر خانتين فارغتين متجاورتين ثم حجرًا — يحدّد ترتيب اختيارك اتجاه الحجر</p>
+                </div>
+                <div class="strands-topbar">
+                    <span class="pips-hint-label">المناطق: <b>Σ</b> مجموع · <b>=</b> تساوٍ</span>
+                    <span class="sudoku-timebar"><span class="sudoku-time-label">الوقت</span> <span id="pips-timer">0:00</span></span>
+                </div>
+                <div class="pips-board" id="pips-board"></div>
+                <div class="wordle-message" id="pips-message"></div>
+                <div class="pips-hand" id="pips-hand"></div>
+                <div class="wordle-actions hidden" id="pips-actions">
+                    <button class="btn-primary" id="pips-share-btn">شارك النتيجة</button>
+                    <button class="conn-btn" id="pips-new-btn">لوحة جديدة</button>
+                </div>
+            </div>
+        </div>
+    </div></template>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        window.SURA_CONFIG = {
+            SUPABASE_URL: 'https://uqgndtsfrbgmgpqhuaeh.supabase.co',
+            SUPABASE_ANON_KEY: 'sb_publishable_wLQvO_CMPokl7eDD5NAPnw_ugq-yVAP'
+        };
+    </script>
+    <script src="app.js?v=81892949"></script>
+
+    <!-- ============================================================
+         SuraNavbar glue — crossfade sync + mobile drawer + auth mirror.
+         Self-contained: reacts to the .active class app.js already sets on
+         .nav-label[data-target], and delegates account actions to the real
+         #login-button / #settings-button / #logout-button. It never touches
+         auth logic — it only reads/relays their state and clicks.
+         ============================================================ -->
+    <script>
+    (function () {
+        'use strict';
+        var nav    = document.getElementById('nav-container');
+        if (!nav) return;
+        var imgs   = Array.prototype.slice.call(nav.querySelectorAll('.sura-navbar__img'));
+        var labels = Array.prototype.slice.call(nav.querySelectorAll('.nav-label[data-target]'));
+
+        // ---- crossfade: mirror whichever desktop label is .active into the art ----
+        function syncCrossfade() {
+            var active = labels.filter(function (l) { return l.classList.contains('active'); })[0];
+            var route = active ? active.getAttribute('data-target') : 'home';
+            imgs.forEach(function (img) { img.classList.toggle('is-active', img.dataset.route === route); });
+        }
+        // app.js toggles .active on the labels; watch the class attribute to follow it
+        var mo = new MutationObserver(syncCrossfade);
+        labels.forEach(function (l) { mo.observe(l, { attributes: true, attributeFilter: ['class'] }); });
+        syncCrossfade();
+
+        // ---- scroll shadow ----
+        function onScroll() { nav.classList.toggle('is-scrolled', window.scrollY > 4); }
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+
+        // ---- mobile account cluster (inline in the top bar; no drawer) ----
+        // Proxies the real desktop controls so app.js's auth logic is untouched;
+        // we only relay clicks and mirror #login-button's state.
+        var loginBtn    = document.getElementById('login-button');
+        var settingsBtn = document.getElementById('settings-button');
+        var logoutBtn   = document.getElementById('logout-button');
+        var acctBox     = document.getElementById('sura-mbar-acct');
+        // style #login-button as the gold bead (class kept out of app.js's reach)
+        if (loginBtn) loginBtn.classList.add('nav-login-bead');
+
+        function mkGear() {
+            var b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'sura-mbar__iconbtn';
+            b.setAttribute('aria-label', 'الإعدادات والعرض');
+            b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>';
+            b.addEventListener('click', function () { settingsBtn && settingsBtn.click(); });
+            return b;
+        }
+        function renderMbarAccount() {
+            if (!acctBox) return;
+            var signedIn = loginBtn && loginBtn.dataset.signedIn === '1';
+            acctBox.innerHTML = '';
+            var bead = document.createElement('button');
+            bead.type = 'button';
+            bead.className = 'sura-mbar__login';
+            bead.textContent = signedIn ? (loginBtn.textContent || 'حسابي') : 'دخول';
+            bead.addEventListener('click', function () { loginBtn && loginBtn.click(); });
+            acctBox.appendChild(bead);
+            acctBox.appendChild(mkGear());
+            if (signedIn) {
+                var out = document.createElement('button');
+                out.type = 'button';
+                out.className = 'sura-mbar__iconbtn sura-mbar__logout';
+                out.setAttribute('aria-label', 'تسجيل الخروج');
+                out.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>';
+                out.addEventListener('click', function () { logoutBtn && logoutBtn.click(); });
+                acctBox.appendChild(out);
+            }
+        }
+        // app.js mutates #login-button (text + data-signed-in) on auth changes; follow it
+        if (loginBtn) {
+            new MutationObserver(renderMbarAccount)
+                .observe(loginBtn, { attributes: true, childList: true, characterData: true, subtree: true });
+        }
+        renderMbarAccount();
+
+        // ---- page-switch routing ---------------------------------------------
+        // The site now shows ONE section at a time; app.js's manuallyMorphBackdrop
+        // already toggles .active on the target <section> (that's what the CSS uses
+        // to show/hide pages). Nav links, the logo and #get-started-btn are wired in
+        // app.js. We only need to (a) route the *other* in-page section anchors
+        // (e.g. the hero "نشرة سُرى" button, any #home/#games/#newsletter link that
+        // isn't itself a .nav-link) through the same handler, and (b) scroll a page
+        // back to the top each time it becomes active.
+        var SECTION_IDS = { home: 1, games: 1, newsletter: 1 };
+        document.addEventListener('click', function (e) {
+            var a = e.target.closest && e.target.closest('a[href^="#"]');
+            if (!a || a.classList.contains('nav-link')) return;   // app.js handles nav-links
+            var id = a.getAttribute('href').slice(1);
+            if (!SECTION_IDS[id]) return;                         // not a page anchor
+            var navLink = document.querySelector('.nav-link[data-target="' + id + '"]');
+            if (!navLink) return;
+            e.preventDefault();
+            navLink.click();                                      // reuse app.js morph
+        });
+        Array.prototype.forEach.call(
+            document.querySelectorAll('.main-content > .scroll-section'),
+            function (sec) {
+                new MutationObserver(function () {
+                    if (sec.classList.contains('active')) sec.scrollTop = 0;
+                }).observe(sec, { attributes: true, attributeFilter: ['class'] });
+            }
+        );
+    })();
+    </script>
+</body>
+</html>

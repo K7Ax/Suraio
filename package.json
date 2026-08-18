@@ -1,0 +1,55 @@
+{
+  "name": "sura",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sura / سُرى — Arabic brain-games web app (static frontend + Supabase).",
+  "scripts": {
+    "test": "node --test \"tests/**/*.test.js\"",
+    "lint": "node scripts/build/lint.js",
+    "bundle": "esbuild src/main.js --bundle --minify --format=iife --charset=utf8 --outfile=app.js",
+    "bundle:dev": "esbuild src/main.js --bundle --sourcemap --charset=utf8 --format=iife --outfile=app.js",
+    "bundle:404": "esbuild src/tallal.js --bundle --minify --format=iife --charset=utf8 --outfile=tallal.js",
+    "build": "npm run bundle && npm run bundle:404 && node scripts/build/preflight.js && node scripts/build/csp.js",
+    "dict": "node scripts/bank/gen_dict.js",
+    "dist": "npm run build && node scripts/build/dist.js",
+    "publish:tree": "node scripts/build/publish.js",
+    "sweep": "node scripts/qa/sweep.js",
+    "fingerprint": "node scripts/qa/fingerprint.js",
+    "perf": "node scripts/qa/perfbench.js",
+    "loadtest": "node scripts/qa/loadtest.js",
+    "bot": "node bot.js",
+    "csp": "node scripts/build/csp.js",
+    "promo:fonts": "node scripts/promo/fonts.js",
+    "promo:sfx": "node scripts/promo/sfx.js",
+    "promo:render": "node scripts/promo/sfx.js && node scripts/promo/capture.js --out promo/.work/_master.mp4 && npm run promo:variants",
+    "promo:preview": "node scripts/promo/capture.js --preview",
+    "promo:vo": "node scripts/promo/vo.js",
+    "promo:mux": "node scripts/promo/mux.js",
+    "promo:samples": "node scripts/promo/samples.js",
+    "promo:music": "node scripts/promo/music.js",
+    "promo:audition": "node scripts/promo/audition.js",
+    "promo:test": "node scripts/promo/capture.js --seconds 2 --out promo/.work/_test.mp4",
+    "promo:verify": "node scripts/promo/verify.js",
+    "promo:plates": "node scripts/promo/plates.js",
+    "promo:cards": "node scripts/promo/cards.js",
+    "promo:spike": "node scripts/promo/spike-vt.js",
+    "promo:seqsheet": "node scripts/promo/seqsheet.js",
+    "promo:stills": "node scripts/promo/stills.js",
+    "promo:golden": "node scripts/promo/golden.js",
+    "promo:sheet": "node scripts/promo/sheet.js",
+    "assets:dekey": "node scripts/assets/dekey.js",
+    "promo:variants": "node scripts/promo/mux.js --in promo/.work/_master.mp4 --out promo/.work/sura-20s-sfx.mp4 --stems promo/.work/sfx.wav && node scripts/promo/mux.js --in promo/.work/_master.mp4 --out promo/.work/sura-20s-vo.mp4 --stems promo/.work/sfx.wav promo/.work/vo.wav",
+    "promo:framing": "node scripts/promo/framing.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.1",
+    "sharp": "^0.35.3"
+  },
+  "dependencies": {
+    "gsap": "^3.15.0",
+    "lottie-web": "^5.13.0"
+  }
+}

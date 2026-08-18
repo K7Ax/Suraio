@@ -1,0 +1,69 @@
+# Sura — Supabase project configuration.
+#
+# WHY THIS FILE EXISTS (audit finding A4). Until now `verify_jwt` existed only
+# as a toggle in the Supabase dashboard and as prose in docs/architecture/architecture.md.
+# It was not version-controlled, not reviewed, and not visible in any diff —
+# yet three functions' entire authentication rested on it. A security control
+# that lives in a web form is a control nobody can review.
+#
+# It is written down here so the setting travels with the code and a change to
+# it shows up in a diff. It is NOT, however, relied upon: every function now
+# verifies identity itself via `verifiedUser()` in _shared/guard.ts. Defence in
+# depth means this file being wrong is a finding, not a breach.
+#
+# NOTE: `supabase db push` is forbidden in this project (migrations are pasted
+# by hand in the SQL Editor — see docs/operations/ai-agent-rules.md). This file is used
+# only by `supabase functions deploy`.
+
+project_id = "uqgndtsfrbgmgpqhuaeh"
+
+# --- Open by design: anonymous visitors must be able to play ----------------
+# These three take no user identity at all. They are rate-limited in code
+# (_shared/guard.ts) because there is no auth.uid() to key a limiter on.
+
+[functions.get-todays-puzzle]
+verify_jwt = false
+
+[functions.get-daily-challenge]
+verify_jwt = false
+
+[functions.get-leaderboard]
+verify_jwt = false
+
+# The player most likely to hit a bug is the one who never signed in. Demanding
+# an account to file a report collects nothing. Identity is read when a token is
+# present (verifiedUser) and simply absent otherwise; the write limit is counted
+# in the table, not in isolate memory.
+[functions.submit-feedback]
+verify_jwt = false
+
+# --- Signed-in players ------------------------------------------------------
+# The platform gate rejects forged tokens before the function runs; the
+# function then verifies again with auth.getUser(). Both, deliberately.
+
+[functions.submit-guess]
+verify_jwt = true
+
+[functions.submit-progress]
+verify_jwt = true
+
+[functions.submit-daily]
+verify_jwt = true
+
+[functions.groq-hint]
+verify_jwt = true
+
+[functions.groq-judge]
+verify_jwt = true
+
+# --- Admin ------------------------------------------------------------------
+# verify_jwt MUST stay false on these two: the Telegram bot has no user session
+# and authenticates with SURA_ADMIN_SECRET instead. The platform gate would
+# reject it before the function could check the secret. Authorization is
+# entirely in-function, and fails closed when the secret is unset.
+
+[functions.groq-review]
+verify_jwt = false
+
+[functions.groq-author]
+verify_jwt = false

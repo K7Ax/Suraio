@@ -1,0 +1,153 @@
+-- ============================================================================
+-- SURA — LIVE SCHEMA SNAPSHOT  (project "sura" uqgndtsfrbgmgpqhuaeh)
+-- Captured read-only from production on 2026-06-22.
+--
+-- ⚠️ REFERENCE ONLY — DO NOT RE-APPLY THIS FILE.
+-- It documents the *current* deployed state so the backend is reviewable in git.
+-- It is NOT an idempotent migration. Real changes go through new, numbered
+-- migration files in this folder and are applied via Supabase MCP / SQL Editor.
+--
+-- RLS is ENABLED on every public table below.
+--
+-- ── Updated after Round 2 hardening (2026-06-22) ──────────────────────────
+--  • game_type CHECK widened to all 10 games (puzzle_bank + daily_puzzles).
+--  • daily_puzzles public SELECT policy DROPPED (solution no longer REST-readable).
+--  • NEW table ai_usage + function bump_ai_usage() for AI rate limiting.
+--  • search_path pinned on enforce_username_rules / username_is_clean.
+--  • set_username revoked from PUBLIC, granted to authenticated only.
+--  • RLS policies on profiles/submissions/streaks wrap auth.uid() in a subselect.
+--  • Added FK covering indexes on daily_puzzles.source_bank_id, game_events.user_id.
+--
+-- ── Updated after Round 3 hardening (2026-07-22) ──────────────────────────
+--  • Leaderboard forgery closed: submissions_insert_self/_update_self DROPPED;
+--    streaks_write_self DROPPED. Result writes now ONLY via service-role
+--    submit-guess. submissions_guard() hardened (completed/score service-only,
+--    range checks). game_events insert tightened to block user_id spoofing.
+--    (See migrations/harden_result_writes.sql.)
+--
+-- ── Updated after Round 3 leaderboard build (2026-07-23) ──────────────────
+--  • NEW server-authoritative global leaderboard (migrations/leaderboard.sql):
+--    tables level_keys / player_progress / player_totals + get_global_leaderboard.
+--    Written ONLY by the new submit-progress Edge Function (service role); the
+--    server owns campaign XP (band-based), never the client. See below.
+-- ============================================================================
+
+-- ─────────────────────────────────────────────────────────────────────────
+-- TABLES (columns abbreviated; see list_tables for full types)
+-- ─────────────────────────────────────────────────────────────────────────
+-- profiles      (id uuid PK → auth.users, username unique[checked], display_name[checked], avatar_url, created_at)
+-- puzzle_bank   (id uuid PK, game_type[check: wordle|connections|crossword|spelling_bee],
+--                payload jsonb, solution jsonb, difficulty 1..5, source[curated|llm|community],
+--                reviewed bool, cultural_tags text[], used_on date, created_at)
+-- daily_puzzles (id uuid PK, game_type[check: 4 types], puzzle_date date, payload jsonb,
+--                solution jsonb, source_bank_id → puzzle_bank, created_at)
+-- daily_challenge  (puzzle_date+game_type PK, tier[easy|medium|hard|hardest],
+--                band smallint[check 0..2 — NEVER 3; a 4th band empties
+--                pickBankIndex's pool and makes Friday easier], is_featured bool,
+--                mode[recipe|payload], recipe jsonb, payload jsonb, solution jsonb,
+--                source_bank_id → puzzle_bank, status[draft|approved|published|rejected],
+--                checks jsonb, ai_review jsonb, generated_by, created_at, approved_at)
+--                Round 4 (2026-07-29). «تحدي اليوم» — the weekday-graded daily mode
+--                beside the campaign. SEPARATE from daily_puzzles on purpose:
+--                get-todays-puzzle lazily INSERTs there and would collide on its
+--                UNIQUE(game_type,puzzle_date).
+-- submissions   (id uuid PK, user_id → profiles, puzzle_id → daily_puzzles, game_type,
+--                guesses jsonb, completed bool, attempts int2, score int4,
+--                time_seconds int4[NULLABLE — currently never written by submit-guess],
+--                started_at, submitted_at)
+-- streaks       (user_id+game_type PK, current_streak, max_streak, last_played_date,
+--                total_played, total_won)
+-- game_events   (id bigint identity PK, user_id → auth.users[nullable], session_id, device_id,
+--                game_type, level_number, event_type[check: 9 analytics types], metadata jsonb, created_at)
+-- ai_usage      (user_id+day+kind PK, count int) — RLS-locked AI rate-limit counter (Round 2)
+-- level_keys    (game_type+level PK, band int, solution jsonb) — service-role only
+--                (RLS on, NO policies). OPTIONAL per-level answer key; when a row
+--                exists submit-progress re-validates the proof. Empty by default →
+--                structural authority only. (Round 3, 2026-07-23.)
+-- player_progress (user_id+game_type+level PK → profiles, xp_awarded, best_time,
+--                best_score, cleared_at) — one row per level cleared. RLS: owner
+--                SELECT own; writes service-role only. PK = idempotency key.
+-- player_totals (user_id PK → profiles, total_xp bigint, rank_tier int, max_streak,
+--                games_cleared, updated_at) — the global-board source. RLS: PUBLIC
+--                SELECT; writes service-role only. Recomputed from player_progress.
+--
+-- game_type CHECK now allows all 10 games (wordle, connections, crossword,
+-- spelling_bee, sudoku, letterboxed, strands, tiles, pips, amthal). The newer
+-- games still run client-side/offline (no server puzzles materialized for them).
+
+-- ─────────────────────────────────────────────────────────────────────────
+-- ROW LEVEL SECURITY POLICIES
+-- ─────────────────────────────────────────────────────────────────────────
+-- daily_puzzles
+--   (no client policies — Round 2 dropped daily_puzzles_read_public). RLS denies
+--    all client reads; only the service-role functions read it. solution is safe.
+-- game_events
+--   game_events_insert_anyone   INSERT  anon,auth   WITH CHECK (user_id is null
+--                                                    or user_id = (select auth.uid()))
+--     (Round 3: was WITH CHECK(true); tightened to block user_id spoofing. Still
+--      insert-only analytics ingest; no SELECT policy ⇒ reads denied.)
+-- profiles
+--   profiles_read_public        SELECT  public          USING (true)
+--   profiles_update_self        UPDATE  public           USING (auth.uid() = id)
+-- puzzle_bank
+--   puzzle_bank_no_anon         ALL     anon             USING (false) WITH CHECK (false)
+--   puzzle_bank_no_authenticated ALL    authenticated    USING (false) WITH CHECK (false)
+--     (locked down — only the service role reaches it; solutions protected)
+-- streaks
+--   streaks_read_public         SELECT  public          USING (true)
+--     (Round 3: streaks_write_self DROPPED — writes only via service-role
+--      submit-guess. A client can no longer forge its own streak totals.)
+-- submissions
+--   submissions_read_self       SELECT  public           USING (auth.uid() = user_id)
+--     (Round 3: submissions_insert_self + submissions_update_self DROPPED. Result
+--      writes flow ONLY through submit-guess (service role). This closed the
+--      leaderboard-forgery hole. submissions_guard() additionally makes
+--      completed/score service-authoritative + range-checks score/time.)
+-- level_keys        (no policies) — service-role only, like puzzle_bank.
+-- player_progress
+--   player_progress_read_self   SELECT  public   USING ((select auth.uid()) = user_id)
+--     (writes service-role only via submit-progress)
+-- player_totals
+--   player_totals_read_public   SELECT  public   USING (true)
+--     (the global-board source; writes service-role only via submit-progress)
+
+-- ─────────────────────────────────────────────────────────────────────────
+-- INDEXES
+-- ─────────────────────────────────────────────────────────────────────────
+-- daily_puzzles: pkey(id); UNIQUE(game_type,puzzle_date); btree(puzzle_date DESC)
+-- game_events:   pkey(id); (event_type,created_at); (game_type,level_number,event_type)[UNUSED];
+--                (device_id,created_at)
+-- profiles:      pkey(id); UNIQUE(username); UNIQUE(lower(username))
+-- puzzle_bank:   pkey(id); (game_type,reviewed,used_on)[UNUSED]
+-- streaks:       pkey(user_id,game_type)
+-- submissions:   pkey(id); UNIQUE(user_id,puzzle_id); (puzzle_id,completed,score DESC);
+--                (user_id,submitted_at DESC)
+-- ai_usage:      pkey(user_id,day,kind)
+-- daily_puzzles: + daily_puzzles_source_bank_idx (Round 2 FK index)
+-- game_events:   + game_events_user_idx (Round 2 FK index)
+-- daily_challenge: pkey(puzzle_date,game_type); btree(puzzle_date DESC);
+--                UNIQUE(puzzle_date) WHERE is_featured — exactly one headline game
+--                per date, enforced by the database rather than by the bot;
+--                daily_challenge_source_bank_idx (FK index)
+
+-- ─────────────────────────────────────────────────────────────────────────
+-- FUNCTIONS (SECURITY DEFINER unless noted)
+-- ─────────────────────────────────────────────────────────────────────────
+-- get_leaderboard_today(text,int) DEFINER  search_path=public        — public per-game daily board projection
+-- get_global_leaderboard(int)     DEFINER  search_path=public        — public global XP/rank board (Round 3);
+--                                 anon+authenticated EXECUTE; reads player_totals+profiles, dense rank, limit 1..100
+-- is_sura_admin()                 DEFINER  search_path=public,auth    — email == owner gate
+-- dash_overview / dash_games / dash_level_health / dash_funnel / dash_daily
+--                                 DEFINER  search_path=public,auth    — admin analytics (gated by is_sura_admin)
+-- set_username(text)              DEFINER  search_path=public,pg_catalog
+-- username_available(text)        DEFINER  search_path=public,pg_catalog
+-- handle_new_user()               DEFINER  search_path=public,pg_catalog — auth.users → profiles trigger
+-- normalize_arabic(text)          INVOKER  search_path=pg_catalog,public  — must mirror submit-guess JS
+-- enforce_username_rules()        INVOKER  search_path=public,pg_catalog  (pinned in Round 2)
+-- username_is_clean(text)         INVOKER  search_path=public,pg_catalog  (pinned in Round 2)
+-- submissions_guard()             INVOKER  search_path=public,pg_catalog  — submission integrity trigger
+-- bump_ai_usage(text,int)         DEFINER  search_path=public,pg_catalog  — AI rate-limit counter (Round 2)
+
+-- ─────────────────────────────────────────────────────────────────────────
+-- See docs/security.md for the full advisor findings and remediation plan.
+-- ─────────────────────────────────────────────────────────────────────────

@@ -1,0 +1,98 @@
+[
+  {
+    "name": "stars",
+    "blend": true,
+    "left": -0.01992,
+    "top": -0.02014,
+    "width": 1.03984,
+    "height": 1.04028,
+    "px": [
+      2662,
+      1331
+    ]
+  },
+  {
+    "name": "milkyway",
+    "blend": true,
+    "left": -0.01992,
+    "top": -0.02014,
+    "width": 1.03984,
+    "height": 1.04028,
+    "px": [
+      2662,
+      1331
+    ]
+  },
+  {
+    "name": "moon",
+    "blend": true,
+    "left": 0.08008,
+    "top": 0.05972,
+    "width": 0.13711,
+    "height": 0.14514,
+    "px": [
+      351,
+      176
+    ]
+  },
+  {
+    "name": "dunes-far",
+    "blend": false,
+    "left": -0.025,
+    "top": 0.575,
+    "width": 1.05,
+    "height": 0.29792,
+    "px": [
+      2688,
+      1344
+    ]
+  },
+  {
+    "name": "town",
+    "blend": false,
+    "left": 0.13008,
+    "top": 0.575,
+    "width": 0.59922,
+    "height": 0.05972,
+    "px": [
+      1534,
+      767
+    ]
+  },
+  {
+    "name": "dunes-mid",
+    "blend": false,
+    "left": -0.03984,
+    "top": 0.61528,
+    "width": 1.08008,
+    "height": 0.64514,
+    "px": [
+      2765,
+      1383
+    ]
+  },
+  {
+    "name": "dune-near",
+    "blend": false,
+    "left": -0.08008,
+    "top": 0.71528,
+    "width": 1.16016,
+    "height": 0.74931,
+    "px": [
+      2970,
+      1485
+    ]
+  },
+  {
+    "name": "traveller",
+    "blend": false,
+    "left": 0.62773,
+    "top": 0.66528,
+    "width": 0.0543,
+    "height": 0.23472,
+    "px": [
+      139,
+      70
+    ]
+  }
+]

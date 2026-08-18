@@ -1,0 +1,32 @@
+# مُولَّدٌ بـscripts/build/csp.js — لا يُحرَّر بيد. أعد البناء بدلًا من ذلك.
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'sha256-DbS+4Q33W5fA8UMpHFvImtt7yURwVLCNQestkceYpVI=' 'sha256-KNhGKjgcEi4U0BxVAAoyfH1E4Z1KxJ2RRf6bqBN4dqs=' 'sha256-481qmc6w7eQmW8Qa3770EWkHEchk8xbT0wnJU+a++HI=' 'sha256-koN3PN7IGSAsrWPAfY9jpINAClKIzNAgVEPYauxicFY=' 'sha256-pMsVt2WdsT0fXR3gPvRWxB4PhPSD4nq+ORzP5znksW4=' 'sha256-KX4j33spkikllpccURG9pjz097rw99EeH2Mp8IH3OK8=' 'sha256-GK7M7EiM7iXR8VJktr+rCWoWPkr740q8mwVRUBMj+QM='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://res.cloudinary.com; media-src 'self' blob: https://res.cloudinary.com; worker-src 'self' blob:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+  Permissions-Policy: geolocation=(), camera=(), payment=(), usb=(), interest-cohort=()
+  Cross-Origin-Opener-Policy: same-origin
+
+# الحزم مبصومةٌ بـ?v= من preflight، فالتخزين الطويل آمنٌ عليها.
+/app.js
+  Cache-Control: public, max-age=31536000, immutable
+/style.css
+  Cache-Control: public, max-age=31536000, immutable
+/tallal.js
+  Cache-Control: public, max-age=31536000, immutable
+/bank/*
+  Cache-Control: public, max-age=86400
+/public/*
+  Cache-Control: public, max-age=604800
+
+# المستندُ نفسه لا يُخزَّن: هو الذي يحمل ?v= الجديدة. وصفحةُ الخطأ أولى بذلك.
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+/404.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+# وثيقةٌ قانونيّة: تُقرأ نادرًا وتتغيّر نادرًا، لكنّ نسخةً قديمةً منها في ذاكرة
+# متصفّحٍ تعني وعدًا لم يعد قائمًا. ساعةٌ سقفٌ للتخزين، لا أكثر.
+/privacy.html
+  Cache-Control: public, max-age=3600, must-revalidate

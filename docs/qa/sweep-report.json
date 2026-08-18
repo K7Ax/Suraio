@@ -1,0 +1,1025 @@
+{
+  "at": "2026-08-18T03:10:06.355Z",
+  "base": "http://localhost:8000",
+  "games": [
+    "wordle",
+    "connections",
+    "spelling_bee",
+    "amthal",
+    "warmer",
+    "lamha"
+  ],
+  "levels": 21,
+  "runs": 126,
+  "failures": [],
+  "rows": [
+    {
+      "game": "wordle",
+      "level": 1,
+      "kids": 24,
+      "info": "المستوى 1 · سهل 1/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "wordle",
+      "level": 2,
+      "kids": 24,
+      "info": "المستوى 2 · سهل 2/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "wordle",
+      "level": 3,
+      "kids": 24,
+      "info": "المستوى 3 · سهل 3/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "wordle",
+      "level": 4,
+      "kids": 24,
+      "info": "المستوى 4 · سهل 4/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "wordle",
+      "level": 5,
+      "kids": 24,
+      "info": "المستوى 5 · سهل 5/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "wordle",
+      "level": 6,
+      "kids": 24,
+      "info": "المستوى 6 · سهل 6/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "wordle",
+      "level": 7,
+      "kids": 30,
+      "info": "المستوى 7 · متوسط 1/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "wordle",
+      "level": 8,
+      "kids": 30,
+      "info": "المستوى 8 · متوسط 2/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "wordle",
+      "level": 9,
+      "kids": 30,
+      "info": "المستوى 9 · متوسط 3/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "wordle",
+      "level": 10,
+      "kids": 30,
+      "info": "المستوى 10 · متوسط 4/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "wordle",
+      "level": 11,
+      "kids": 30,
+      "info": "المستوى 11 · متوسط 5/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "wordle",
+      "level": 12,
+      "kids": 30,
+      "info": "المستوى 12 · متوسط 6/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "wordle",
+      "level": 13,
+      "kids": 30,
+      "info": "المستوى 13 · متوسط 7/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "wordle",
+      "level": 14,
+      "kids": 30,
+      "info": "المستوى 14 · متوسط 8/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "wordle",
+      "level": 15,
+      "kids": 30,
+      "info": "المستوى 15 · متوسط 9/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "wordle",
+      "level": 16,
+      "kids": 36,
+      "info": "المستوى 16 · صعب 1/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "wordle",
+      "level": 17,
+      "kids": 36,
+      "info": "المستوى 17 · صعب 2/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "wordle",
+      "level": 18,
+      "kids": 36,
+      "info": "المستوى 18 · صعب 3/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "wordle",
+      "level": 19,
+      "kids": 36,
+      "info": "المستوى 19 · صعب 4/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "wordle",
+      "level": 20,
+      "kids": 36,
+      "info": "المستوى 20 · صعب 5/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "wordle",
+      "level": 21,
+      "kids": 36,
+      "info": "المستوى 21 · صعب 6/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "connections",
+      "level": 1,
+      "kids": 16,
+      "info": "المستوى 1 · سهل 1/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "connections",
+      "level": 2,
+      "kids": 16,
+      "info": "المستوى 2 · سهل 2/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "connections",
+      "level": 3,
+      "kids": 16,
+      "info": "المستوى 3 · سهل 3/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "connections",
+      "level": 4,
+      "kids": 16,
+      "info": "المستوى 4 · سهل 4/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "connections",
+      "level": 5,
+      "kids": 20,
+      "info": "المستوى 5 · سهل 5/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "connections",
+      "level": 6,
+      "kids": 20,
+      "info": "المستوى 6 · سهل 6/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "connections",
+      "level": 7,
+      "kids": 20,
+      "info": "المستوى 7 · متوسط 1/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "connections",
+      "level": 8,
+      "kids": 20,
+      "info": "المستوى 8 · متوسط 2/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "connections",
+      "level": 9,
+      "kids": 20,
+      "info": "المستوى 9 · متوسط 3/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "connections",
+      "level": 10,
+      "kids": 24,
+      "info": "المستوى 10 · متوسط 4/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "connections",
+      "level": 11,
+      "kids": 24,
+      "info": "المستوى 11 · متوسط 5/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "connections",
+      "level": 12,
+      "kids": 24,
+      "info": "المستوى 12 · متوسط 6/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "connections",
+      "level": 13,
+      "kids": 24,
+      "info": "المستوى 13 · متوسط 7/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "connections",
+      "level": 14,
+      "kids": 24,
+      "info": "المستوى 14 · متوسط 8/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "connections",
+      "level": 15,
+      "kids": 24,
+      "info": "المستوى 15 · متوسط 9/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "connections",
+      "level": 16,
+      "kids": 24,
+      "info": "المستوى 16 · صعب 1/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "connections",
+      "level": 17,
+      "kids": 24,
+      "info": "المستوى 17 · صعب 2/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "connections",
+      "level": 18,
+      "kids": 28,
+      "info": "المستوى 18 · صعب 3/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "connections",
+      "level": 19,
+      "kids": 28,
+      "info": "المستوى 19 · صعب 4/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "connections",
+      "level": 20,
+      "kids": 28,
+      "info": "المستوى 20 · صعب 5/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "connections",
+      "level": 21,
+      "kids": 28,
+      "info": "المستوى 21 · صعب 6/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "spelling_bee",
+      "level": 1,
+      "kids": 7,
+      "info": "المستوى 1 · سهل 1/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "spelling_bee",
+      "level": 2,
+      "kids": 7,
+      "info": "المستوى 2 · سهل 2/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "spelling_bee",
+      "level": 3,
+      "kids": 7,
+      "info": "المستوى 3 · سهل 3/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "spelling_bee",
+      "level": 4,
+      "kids": 7,
+      "info": "المستوى 4 · سهل 4/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "spelling_bee",
+      "level": 5,
+      "kids": 7,
+      "info": "المستوى 5 · سهل 5/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "spelling_bee",
+      "level": 6,
+      "kids": 7,
+      "info": "المستوى 6 · سهل 6/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "spelling_bee",
+      "level": 7,
+      "kids": 7,
+      "info": "المستوى 7 · متوسط 1/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "spelling_bee",
+      "level": 8,
+      "kids": 7,
+      "info": "المستوى 8 · متوسط 2/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "spelling_bee",
+      "level": 9,
+      "kids": 7,
+      "info": "المستوى 9 · متوسط 3/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "spelling_bee",
+      "level": 10,
+      "kids": 7,
+      "info": "المستوى 10 · متوسط 4/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "spelling_bee",
+      "level": 11,
+      "kids": 7,
+      "info": "المستوى 11 · متوسط 5/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "spelling_bee",
+      "level": 12,
+      "kids": 7,
+      "info": "المستوى 12 · متوسط 6/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "spelling_bee",
+      "level": 13,
+      "kids": 7,
+      "info": "المستوى 13 · متوسط 7/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "spelling_bee",
+      "level": 14,
+      "kids": 7,
+      "info": "المستوى 14 · متوسط 8/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "spelling_bee",
+      "level": 15,
+      "kids": 7,
+      "info": "المستوى 15 · متوسط 9/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "spelling_bee",
+      "level": 16,
+      "kids": 7,
+      "info": "المستوى 16 · صعب 1/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "spelling_bee",
+      "level": 17,
+      "kids": 7,
+      "info": "المستوى 17 · صعب 2/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "spelling_bee",
+      "level": 18,
+      "kids": 7,
+      "info": "المستوى 18 · صعب 3/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "spelling_bee",
+      "level": 19,
+      "kids": 7,
+      "info": "المستوى 19 · صعب 4/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "spelling_bee",
+      "level": 20,
+      "kids": 7,
+      "info": "المستوى 20 · صعب 5/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "spelling_bee",
+      "level": 21,
+      "kids": 7,
+      "info": "المستوى 21 · صعب 6/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "amthal",
+      "level": 1,
+      "kids": 4,
+      "info": "المستوى 1 · سهل 1/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "amthal",
+      "level": 2,
+      "kids": 4,
+      "info": "المستوى 2 · سهل 2/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "amthal",
+      "level": 3,
+      "kids": 4,
+      "info": "المستوى 3 · سهل 3/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "amthal",
+      "level": 4,
+      "kids": 3,
+      "info": "المستوى 4 · سهل 4/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "amthal",
+      "level": 5,
+      "kids": 3,
+      "info": "المستوى 5 · سهل 5/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "amthal",
+      "level": 6,
+      "kids": 3,
+      "info": "المستوى 6 · سهل 6/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "amthal",
+      "level": 7,
+      "kids": 4,
+      "info": "المستوى 7 · متوسط 1/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "amthal",
+      "level": 8,
+      "kids": 5,
+      "info": "المستوى 8 · متوسط 2/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "amthal",
+      "level": 9,
+      "kids": 6,
+      "info": "المستوى 9 · متوسط 3/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "amthal",
+      "level": 10,
+      "kids": 5,
+      "info": "المستوى 10 · متوسط 4/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "amthal",
+      "level": 11,
+      "kids": 3,
+      "info": "المستوى 11 · متوسط 5/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "amthal",
+      "level": 12,
+      "kids": 6,
+      "info": "المستوى 12 · متوسط 6/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "amthal",
+      "level": 13,
+      "kids": 5,
+      "info": "المستوى 13 · متوسط 7/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "amthal",
+      "level": 14,
+      "kids": 3,
+      "info": "المستوى 14 · متوسط 8/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "amthal",
+      "level": 15,
+      "kids": 5,
+      "info": "المستوى 15 · متوسط 9/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "amthal",
+      "level": 16,
+      "kids": 5,
+      "info": "المستوى 16 · صعب 1/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "amthal",
+      "level": 17,
+      "kids": 6,
+      "info": "المستوى 17 · صعب 2/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "amthal",
+      "level": 18,
+      "kids": 8,
+      "info": "المستوى 18 · صعب 3/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "amthal",
+      "level": 19,
+      "kids": 6,
+      "info": "المستوى 19 · صعب 4/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "amthal",
+      "level": 20,
+      "kids": 4,
+      "info": "المستوى 20 · صعب 5/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "amthal",
+      "level": 21,
+      "kids": 7,
+      "info": "المستوى 21 · صعب 6/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "warmer",
+      "level": 1,
+      "kids": 4,
+      "info": "المستوى 1 · سهل 1/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "warmer",
+      "level": 2,
+      "kids": 4,
+      "info": "المستوى 2 · سهل 2/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "warmer",
+      "level": 3,
+      "kids": 4,
+      "info": "المستوى 3 · سهل 3/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "warmer",
+      "level": 4,
+      "kids": 4,
+      "info": "المستوى 4 · سهل 4/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "warmer",
+      "level": 5,
+      "kids": 4,
+      "info": "المستوى 5 · سهل 5/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "warmer",
+      "level": 6,
+      "kids": 4,
+      "info": "المستوى 6 · سهل 6/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "warmer",
+      "level": 7,
+      "kids": 4,
+      "info": "المستوى 7 · متوسط 1/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "warmer",
+      "level": 8,
+      "kids": 4,
+      "info": "المستوى 8 · متوسط 2/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "warmer",
+      "level": 9,
+      "kids": 4,
+      "info": "المستوى 9 · متوسط 3/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "warmer",
+      "level": 10,
+      "kids": 4,
+      "info": "المستوى 10 · متوسط 4/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "warmer",
+      "level": 11,
+      "kids": 4,
+      "info": "المستوى 11 · متوسط 5/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "warmer",
+      "level": 12,
+      "kids": 4,
+      "info": "المستوى 12 · متوسط 6/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "warmer",
+      "level": 13,
+      "kids": 4,
+      "info": "المستوى 13 · متوسط 7/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "warmer",
+      "level": 14,
+      "kids": 4,
+      "info": "المستوى 14 · متوسط 8/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "warmer",
+      "level": 15,
+      "kids": 4,
+      "info": "المستوى 15 · متوسط 9/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "warmer",
+      "level": 16,
+      "kids": 4,
+      "info": "المستوى 16 · صعب 1/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "warmer",
+      "level": 17,
+      "kids": 4,
+      "info": "المستوى 17 · صعب 2/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "warmer",
+      "level": 18,
+      "kids": 4,
+      "info": "المستوى 18 · صعب 3/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "warmer",
+      "level": 19,
+      "kids": 4,
+      "info": "المستوى 19 · صعب 4/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "warmer",
+      "level": 20,
+      "kids": 4,
+      "info": "المستوى 20 · صعب 5/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "warmer",
+      "level": 21,
+      "kids": 4,
+      "info": "المستوى 21 · صعب 6/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "lamha",
+      "level": 1,
+      "kids": 3,
+      "info": "المستوى 1 · سهل 1/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "lamha",
+      "level": 2,
+      "kids": 3,
+      "info": "المستوى 2 · سهل 2/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "lamha",
+      "level": 3,
+      "kids": 3,
+      "info": "المستوى 3 · سهل 3/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "lamha",
+      "level": 4,
+      "kids": 3,
+      "info": "المستوى 4 · سهل 4/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "lamha",
+      "level": 5,
+      "kids": 3,
+      "info": "المستوى 5 · سهل 5/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "lamha",
+      "level": 6,
+      "kids": 3,
+      "info": "المستوى 6 · سهل 6/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "lamha",
+      "level": 7,
+      "kids": 3,
+      "info": "المستوى 7 · متوسط 1/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "lamha",
+      "level": 8,
+      "kids": 3,
+      "info": "المستوى 8 · متوسط 2/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "lamha",
+      "level": 9,
+      "kids": 3,
+      "info": "المستوى 9 · متوسط 3/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "lamha",
+      "level": 10,
+      "kids": 3,
+      "info": "المستوى 10 · متوسط 4/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "lamha",
+      "level": 11,
+      "kids": 3,
+      "info": "المستوى 11 · متوسط 5/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "lamha",
+      "level": 12,
+      "kids": 3,
+      "info": "المستوى 12 · متوسط 6/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "lamha",
+      "level": 13,
+      "kids": 3,
+      "info": "المستوى 13 · متوسط 7/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "lamha",
+      "level": 14,
+      "kids": 3,
+      "info": "المستوى 14 · متوسط 8/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "lamha",
+      "level": 15,
+      "kids": 3,
+      "info": "المستوى 15 · متوسط 9/9",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "lamha",
+      "level": 16,
+      "kids": 3,
+      "info": "المستوى 16 · صعب 1/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "lamha",
+      "level": 17,
+      "kids": 3,
+      "info": "المستوى 17 · صعب 2/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "lamha",
+      "level": 18,
+      "kids": 3,
+      "info": "المستوى 18 · صعب 3/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "lamha",
+      "level": 19,
+      "kids": 3,
+      "info": "المستوى 19 · صعب 4/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "lamha",
+      "level": 20,
+      "kids": 3,
+      "info": "المستوى 20 · صعب 5/6",
+      "hint": true,
+      "errors": 0
+    },
+    {
+      "game": "lamha",
+      "level": 21,
+      "kids": 3,
+      "info": "المستوى 21 · صعب 6/6",
+      "hint": true,
+      "errors": 0
+    }
+  ]
+}

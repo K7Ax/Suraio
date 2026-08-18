@@ -1,0 +1,57 @@
+# CI for the PUBLIC EXPORT of Sura. This is not the private repository's
+# workflow, and the difference is deliberate rather than a reduction in rigour.
+#
+# The export withholds four inputs — the service-role writer (bot.js), the
+# solution lexicon, the admin dashboard, and the film sources. Every gate that
+# reads one of them is therefore unrunnable here, and a workflow that runs it
+# anyway is a red X that means nothing. What runs below is real:
+#
+#   * every first-party .js/.mjs file is parsed by node --check
+#   * both bundles are rebuilt from src/ and proven identical to the committed
+#     ones — the claim "the bundle is a build artefact, do not edit it" is
+#     enforced, not asserted
+#   * 23 of the 35 test files run, with the live-Supabase ones skipped
+#
+# Not run here, and why:
+#   tests/authoring.test.js        needs bot.js
+#   tests/bank.test.js             needs bot.js
+#   tests/banks.test.js            needs bot.js
+#   tests/bot-admin.test.js        needs bot.js
+#   tests/bot_daily.test.js        needs bot.js
+#   tests/checks.test.js           needs bot.js
+#   tests/feedback.test.js         needs bot.js
+#   tests/normalize.test.js        needs bot.js
+#   tests/resolve.test.js          needs bot.js
+#   tests/dashboard.test.js        needs dashboard.js
+#   tests/dict.test.js             needs bank/words_ar.json
+#   tests/promo.test.js            needs promo
+#   npm run build (preflight + CSP) requires dashboard.html/js, withheld above.
+#
+# All of it runs in the private repo, where those inputs exist.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    env:
+      SURA_SKIP_INTEGRATION: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install deps (esbuild)
+        run: npm ci
+      - name: Lint (syntax)
+        run: npm run lint
+      - name: Bundle src/ with esbuild
+        run: npm run bundle && npm run bundle:404
+      - name: The committed bundles match src/ (no drift)
+        run: git diff --exit-code app.js tallal.js
+      - name: Test
+        run: node --test tests/auth.test.js tests/connections_decoys.test.js tests/cost.test.js tests/csp.test.js tests/daily.test.js tests/daily_seam.test.js tests/daily_window.test.js tests/hero.test.js tests/hints.test.js tests/hud_icons.test.js tests/level_advance.test.js tests/lexicon.test.js tests/loom.test.js tests/modal_templates.test.js tests/modals.test.js tests/privacy.test.js tests/progression.test.js tests/security.test.js tests/story.test.js tests/streak.test.js tests/tallal.test.js tests/tier.test.js tests/wordle_hint.test.js

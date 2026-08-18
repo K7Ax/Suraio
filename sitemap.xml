@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  خريطةُ الموقع. ثلاثةُ مسارات فقط — وهذا ليس نقصًا:
+  سُرى صفحةٌ واحدةٌ والألعابُ نوافذُ داخلها بلا مسارٍ خاصّ، فلا شيءَ آخر
+  يمكن لمحرّك البحث أن يفهرسه. حين تحصل كلُّ لعبةٍ على مسارها (‏history.pushState)
+  تُضاف هنا، وعندها فقط تصير هذه الخريطةُ ذاتَ قيمةٍ حقيقيّة.
+
+  `dashboard.html` غيرُ مذكورةٍ عمدًا: لوحةُ المالك ليست صفحةً عامّة.
+  و`404.html` لا تُدرَج في خريطةِ موقعٍ أبدًا.
+
+  المضيفُ هو الجذر `suraio.com` — نفسُه المُعلَن في `canonical` و`og:url`،
+  ولو اختلفا لألغى أحدُهما الآخر.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://suraio.com/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://suraio.com/hub</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://suraio.com/privacy</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+</urlset>

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<!-- «ضاع الطريق» — صفحة الخطأ في سُرى.
+     ليست رسالة نظام ولا رسمًا ظريفًا: زقاقٌ نجديّ ليلًا، فانوسٌ واحد، وممرٌّ
+     لا يقود إلى حيث كنتَ ذاهبًا. المشهد يقول ما حدث، والزرّ يقول ما تفعله.
+
+     والزخرفة المثلّثة على الجدار الأيسر ليست ملصقًا فلكلوريًّا: هي **بنية**
+     الجدار النجديّ نفسه — وهذا بالضبط ما تطلبه §٤ في docs/architecture/identity.md.
+
+     وهي **قائمةٌ بذاتها**: لا style.css (٢٢٨ كيلوبايت) ولا app.js (٤٣١). صفحةٌ
+     تشرح لك أن شيئًا لم يُوجد يجب ألّا تحتاج إلى وجود شيء. وأصلًا: قد يكون
+     أحدهما هو ما أوصلك إلى هنا.
+
+     الخلفيّة تُبنى بـ`node scripts/assets/tallal_bg.js` من `_design-src/tallal/alley.png`،
+     والحركة كلّها في `src/core/tallal.mjs` — ولا رقمَ زمنيّ واحدٌ في هذا
+     الملفّ. -->
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ضاع الطريق — سُرى</title>
+<meta name="description" content="سُرى — الصفحة التي طلبتها ليست هنا.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#050a14">
+<link rel="icon" type="image/png" sizes="32x32" href="/public/brand/icon-32.png">
+<meta property="og:title" content="ضاع الطريق">
+<meta property="og:description" content="سُرى — الصفحة التي طلبتها ليست هنا.">
+<meta property="og:image" content="/public/tallal/alley-og.webp">
+<!-- الخلفيّة أثقل بايتٍ في الصفحة وأوّل ما يُرى: تُطلَب مع الترميز لا بعده. -->
+<link rel="preload" as="image" href="/public/tallal/alley-1200.webp"
+      imagesrcset="/public/tallal/alley-820.webp 820w, /public/tallal/alley-1200.webp 1200w, /public/tallal/alley-1672.webp 1672w"
+      imagesizes="100vw">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* التوكنز المستعملة هنا وحدها، منقولةً من style.css لا مستوردةً منه — وهذا
+   ثمن الاستقلال، وهو ثمنٌ مقصود. */
+:root {
+    --ink-1: #EAE3D8;
+    --ink-2: #C8BFB2;
+    --gold:  #C9A227;
+    --amber: #E8A54B;   /* دفءُ الفانوس نفسه، مسحوبًا من اللوحة */
+    --night: #050a14;
+}
+* { box-sizing: border-box; }
+html, body {
+    margin: 0;
+    min-height: 100%;
+    background: var(--night);
+    color: var(--ink-1);
+    font-family: "Reem Kufi", "Segoe UI", system-ui, sans-serif;
+    /* letter-spacing: normal على العربيّ قرارٌ ثابت في هذا المشروع، لا سهو */
+    letter-spacing: normal;
+}
+body { overflow: hidden; }   /* المشهد يملأ الشاشة؛ لا تمرير في صفحة خطأ */
+
+/* ---- المشهد ----------------------------------------------------------------
+   طبقاتٌ أربع فوق بعضها، كلٌّ منها `position: fixed` كي لا يكسر شريطُ
+   المتصفّح المتحرّك على الجوّال ارتفاعَ أيٍّ منها. */
+.tallal-scene { position: fixed; inset: 0; overflow: hidden; pointer-events: none; }
+
+/* الغلاف يملك `opacity` و`scale` (حركة الدخول)، والصورة بداخله تملك
+   `translate` وحدها (parallax). **مالكٌ واحدٌ لكلّ خاصّيّة** — وإلّا داس
+   أحدهما الآخر في أوّل حركة مؤشّر. */
+.tallal-bg { position: absolute; inset: 0; z-index: 1; will-change: transform; }
+.tallal-bg__img {
+    display: block; width: 100%; height: 100%;
+    object-fit: cover;
+    /* اليمينُ فيه الفانوس والباب، واليسارُ عتمةٌ يجلس فيها النصّ. القصّ من
+       المركز يبتلع أحدهما، فيُنحّى قليلًا نحو اليمين. */
+    object-position: 58% 50%;
+    /* تكبيرٌ ثابتٌ ١٫٠٣ = فائضُ ١٫٥٪ على كلّ جانب: ثلاثةُ أضعاف أقصى إزاحةٍ
+       يكتبها الـparallax (٠٫٥٪)، فلا تنكشف حافّةٌ أبدًا. */
+    transform-origin: 58% 50%;
+    scale: 1.03;
+    will-change: transform;
+}
+
+/* الحجاب: تدرّجٌ لا سوادٌ مسطّح. يعمّق العتمةَ حيث النصّ ويكاد يتلاشى عند
+   الفانوس — أي يحمي القراءة بلا أن يقتل الصورة. */
+.tallal-veil {
+    position: absolute; inset: 0; z-index: 2;
+    background:
+        linear-gradient(90deg,
+            rgba(5, 10, 20, 0.78) 0%,
+            rgba(5, 10, 20, 0.58) 35%,
+            rgba(5, 10, 20, 0.26) 65%,
+            rgba(5, 10, 20, 0.14) 100%);
+}
+/* ظلٌّ إهليلجيّ خفيف عند الأطراف. الغرض ألّا تُقرأ الحوافّ نهايةَ صورةٍ بل
+   حدَّ رؤية. */
+.tallal-vignette {
+    position: absolute; inset: 0; z-index: 3;
+    background: radial-gradient(ellipse 120% 100% at 55% 45%,
+        rgba(5, 10, 20, 0) 42%, rgba(5, 10, 20, 0.42) 100%);
+}
+/* الفانوس: توهّجٌ دافئٌ فوق موضعه في اللوحة تمامًا (٦٦٪ × ٦٧٪). يصعد مع
+   دخول الصورة ثمّ **يتنفّس** — `GLOW` في tallal.mjs، بأمر المالك بعد أن رأى
+   الصفحة ساكنة. ويستجيب فوق ذلك لاقتراب المؤشّر. */
+.tallal-lamp {
+    position: absolute; z-index: 4;
+    left: 66%; top: 67%;
+    width: min(46vw, 30rem); aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle at center,
+        rgba(232, 165, 75, 0.20) 0%,
+        rgba(196, 118, 40, 0.09) 38%,
+        rgba(120, 62, 16, 0) 70%);
+    mix-blend-mode: screen;
+    will-change: transform;
+}
+
+/* ---- النصّ ------------------------------------------------------------------
+   في العتمة اليسرى من اللوحة. و`flex-end` **هو اليسار** هنا لأن المحور
+   RTL — وهذا مقصودٌ حرفيًّا: مساحة اللوحة الفارغة على اليسار هي التخطيط. */
+.tallal-content {
+    position: relative; z-index: 5;
+    min-height: 100svh;
+    display: flex; align-items: center; justify-content: flex-end;
+    padding: clamp(1.5rem, 5vw, 4rem) clamp(1.5rem, 7vw, 8rem);
+}
+.tallal-block { width: min(34rem, 100%); text-align: right; }
+
+/* «٤٠٤»: ثلاثة أحرفٍ منفصلة كي يسقط كلٌّ منها وحده. و`direction: ltr` على
+   الحاوية لأن الأرقام تُقرأ من اليسار حتى داخل نصٍّ عربيّ — فيقع التتابع
+   يسارًا فيمينًا كما ينبغي. */
+.tallal-num {
+    position: relative;
+    direction: ltr;
+    display: flex; justify-content: flex-end;
+    margin: 0 0 clamp(0.6rem, 2vh, 1.4rem);
+    font-size: clamp(5.5rem, 15vw, 12rem);
+    font-weight: 600;
+    line-height: 0.95;
+    color: var(--ink-1);
+    text-shadow: 0 0.06em 0.5em rgba(5, 10, 20, 0.75);
+}
+.tallal-digit { display: inline-block; will-change: transform; }
+/* ظلّ الارتطام: عند الراحة معدوم، ولا يقع إلّا مرّةً حين يصل آخر رقم. بدونه
+   يهبط الرقم إلى لا شيء — والوزن كلّه في ما يتركه الوقوع لا في الوقوع. */
+.tallal-thud {
+    position: absolute;
+    left: 50%; bottom: -0.10em;
+    width: 78%; height: 0.16em;
+    transform: translateX(-50%);
+    background: radial-gradient(ellipse at center,
+        rgba(232, 165, 75, 0.55) 0%, rgba(232, 165, 75, 0) 70%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.tallal-title {
+    margin: 0;
+    font-size: clamp(1.7rem, 4.4vw, 3.1rem);
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--ink-1);
+    text-shadow: 0 2px 24px rgba(5, 10, 20, 0.9);
+}
+.tallal-body {
+    margin: clamp(0.7rem, 2vh, 1.1rem) 0 0;
+    max-width: 30ch;
+    /* الفقرة تبدأ من يمين الكتلة كالعنوان تمامًا: `margin-inline-start: auto`
+       يدفع فائضَها يسارًا لا يمينًا. */
+    margin-inline-start: auto;
+    font-size: clamp(0.98rem, 1.5vw, 1.15rem);
+    font-weight: 400;
+    line-height: 1.95;
+    color: var(--ink-2);
+    text-shadow: 0 1px 18px rgba(5, 10, 20, 0.9);
+}
+.tallal-cta {
+    display: inline-block;
+    margin-top: clamp(1.5rem, 4vh, 2.4rem);
+    padding: 0.72rem 1.9rem;
+    border: 1px solid rgba(201, 162, 39, 0.5);
+    border-radius: 999px;
+    background: rgba(5, 10, 20, 0.5);
+    color: var(--gold);
+    font-family: inherit;
+    font-size: 1rem;
+    text-decoration: none;
+    backdrop-filter: blur(4px);
+    transition: transform 200ms ease-out, background 200ms ease-out,
+                border-color 200ms ease-out, box-shadow 200ms ease-out;
+}
+.tallal-cta:hover,
+.tallal-cta:focus-visible {
+    transform: translateY(-2px);
+    background: rgba(201, 162, 39, 0.13);
+    border-color: rgba(201, 162, 39, 0.85);
+    box-shadow: 0 6px 22px rgba(201, 162, 39, 0.16);
+}
+.tallal-cta:active { transform: translateY(0); }
+.tallal-cta:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+/* ---- الجوّال ----------------------------------------------------------------
+   القصّ العموديّ من لوحةٍ ١٦:٩ يُبقي ~٢٦٪ من عرضها فقط. توسيطُه يُخرج
+   الفانوس والجدارَ المنقوش معًا، فيُزاح المشهد يمينًا حتى يبقى الفانوس داخل
+   الإطار، وينتقل النصّ إلى أعلى الشاشة حيث العتمة. */
+@media (orientation: portrait) {
+    .tallal-bg__img { object-position: 63% 46%; }
+    .tallal-veil {
+        background:
+            linear-gradient(180deg,
+                rgba(5, 10, 20, 0.80) 0%,
+                rgba(5, 10, 20, 0.62) 38%,
+                rgba(5, 10, 20, 0.22) 70%,
+                rgba(5, 10, 20, 0.34) 100%);
+    }
+    .tallal-lamp { left: 52%; top: 62%; width: min(90vw, 26rem); }
+    .tallal-content {
+        align-items: flex-start; justify-content: center;
+        padding-top: clamp(4rem, 14vh, 9rem);
+    }
+    .tallal-block { text-align: center; }
+    .tallal-num { justify-content: center; }
+    .tallal-body { margin-inline: auto; }
+}
+@media (orientation: portrait) and (max-height: 620px) {
+    .tallal-content { align-items: center; padding-top: 0; }
+}
+
+/* حركةٌ أقلّ: لا سقوط ولا مناقزة ولا نَفَس ولا انسياق ولا parallax — والمشهد
+   عند الراحة هو التصميم النهائي، فلا شيء ينقص من لا يريد الحركة. (`tallal.mjs`
+   يستبدل بالسقوط تدرّجًا واحدًا قصيرًا؛ الظهور الفوريّ التامّ يُقرأ قفزة.)
+   وهذا الحدّ **لم يُرفَع** حين رُفع سقفُ الحركة في §٢. */
+@media (prefers-reduced-motion: reduce) {
+    .tallal-bg, .tallal-bg__img, .tallal-lamp, .tallal-digit { will-change: auto; }
+    .tallal-cta { transition: none; }
+    .tallal-cta:hover, .tallal-cta:focus-visible { transform: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="tallal" id="tallal">
+    <div class="tallal-scene" aria-hidden="true">
+        <div class="tallal-bg">
+            <img class="tallal-bg__img" alt="" fetchpriority="high" decoding="async"
+                 src="/public/tallal/alley-1200.webp"
+                 srcset="/public/tallal/alley-820.webp 820w,
+                         /public/tallal/alley-1200.webp 1200w,
+                         /public/tallal/alley-1672.webp 1672w"
+                 sizes="100vw">
+        </div>
+        <div class="tallal-veil"></div>
+        <div class="tallal-vignette"></div>
+        <div class="tallal-lamp"></div>
+    </div>
+
+    <main class="tallal-content">
+        <div class="tallal-block">
+            <!-- ثلاثة أحرفٍ للحركة، وقراءةٌ واحدةٌ لقارئ الشاشة.
+                 و«404» باللاتينيّة بقرار المالك — خلافًا لبقيّة الموقع
+                 الهنديّة الأرقام: رقمُ خطأ HTTP يُقرأ رمزًا عالميًّا لا عددًا. -->
+            <p class="tallal-num" role="img" aria-label="خطأ 404">
+                <span class="tallal-digit" aria-hidden="true">4</span><span class="tallal-digit" aria-hidden="true">0</span><span class="tallal-digit" aria-hidden="true">4</span>
+                <span class="tallal-thud" aria-hidden="true"></span>
+            </p>
+            <h1 class="tallal-title">ضاع الطريق</h1>
+            <p class="tallal-body">يبدو أنك وصلت إلى ممر لا يقود إلى الصفحة التي تبحث عنها.</p>
+            <a class="tallal-cta" href="/#home">العودة إلى سُرى</a>
+        </div>
+    </main>
+</div>
+
+<script src="/tallal.js?v=54144798"></script>
+</body>
+</html>

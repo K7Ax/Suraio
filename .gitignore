@@ -1,0 +1,88 @@
+# ── Secrets & environment ────────────────────────────────────────────────
+# Never commit real secrets. Use .env.example (placeholders) as the template.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# ── Local tooling / harness config ───────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Node / Python build & cache artifacts ────────────────────────────────
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# ── Generated output ─────────────────────────────────────────────────────
+# dist/ is derived entirely from source by `npm run dist`.
+dist/
+# The promo film's kitchen: captured frames, downloaded fonts, ffmpeg output.
+# All derived from promo/ and from the site itself, and measured in gigabytes.
+# The film's SOURCE (promo/*.mjs, ad.html, ad.css) is committed.
+promo/.work/
+# esbuild source map of the generated bundle.
+app.js.map
+# Benchmark and asset-work output written by scripts/qa/ and scripts/assets/.
+.bench/
+.hero_work/
+# Behavioural baselines from scripts/qa/fingerprint.js. Deliberately NOT tracked:
+# a baseline is only meaningful against the build it was captured from, so a
+# committed one would age into a false alarm that someone eventually deletes.
+# Capture it fresh on each refactor — that is the whole workflow.
+.fingerprint/
+# The public-repo tree, rebuilt by scripts/build/publish.js. It is a *copy* of
+# this one minus the withheld paths — committing it here would track every file
+# twice and let the copy drift into the thing of record.
+.publish/
+# Operator review pages (they print puzzle SOLUTIONS by design).
+review_*.html
+# The puzzle-bank seed: 193 KB of INSERTs whose payload is the solution to every
+# seeded puzzle. Regenerable at any time from committed inputs
+# (`node scripts/bank/gen_seed_sql.js` over bank/*.json + bot.js's builders), so
+# nothing is lost by keeping it out of history — and once an answer key is in
+# git it is in git forever, in a repo the owner intends to publish.
+supabase/sql/seed.sql
+# Lexicon vetting memo (resumable cache). bank/lexicon_ar.json IS committed.
+bank/.lexicon_vet_cache.json
+
+# ── Design masters (inputs to scripts/assets/, never shipped) ────────────
+# Full-resolution originals that the asset generators downscale into the
+# derived, seam-verified WebP under public/. A 2 MB PNG becomes a 25 KB WebP,
+# and only the WebP is deployed. Kept on disk — not in git — so any plate can
+# be re-derived at a different crop or size without regenerating the artwork.
+_design-src/
+
+# ── Archive: non-production material ─────────────────────────────────────
+# Superseded rounds, prototypes, screenshots, and raw data. Nothing here is
+# used by the runtime, the build, the tests, or the deploy. The bytes stay on
+# disk; only the RECORD of what was archived and why is versioned.
+# Written as four rules rather than a plain `archive/` because git will not
+# re-include a file whose PARENT DIRECTORY is excluded — with `archive/` ignored
+# outright, the `!` lines below are dead and the record is lost. Excluding the
+# contents instead leaves git free to descend and see the negations.
+archive/*
+!archive/README.md
+!archive/*/
+archive/*/*
+!archive/*/MANIFEST.md
+# 42 MB raw Arabic corpus, an input to the bank generators years-of-work ago.
+# The pipeline reads bank/words_ar.json now. Lives in archive/data/.
+_ar_full.txt
+
+# ── Supabase CLI local state ─────────────────────────────────────────────
+# Written by `supabase link`; carries the project ref and pooler URL.
+supabase/.temp/
+
+# ── Binary junk that must never be committed ─────────────────────────────
+# Third-party installers and archives that landed in the tree during dev.
+*.exe
+*.zip
+# Superseded video/asset copies kept only as a manual undo.
+*.bak
+# Hash-named scratch image drops. *.jfif is never a live asset here.
+*.jfif

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سُرى — لوحة اليوم (معاينة)</title>
+<script>
+(function(){try{var p=JSON.parse(localStorage.getItem('sura.pref')||'{}');var r=document.documentElement;r.style.setProperty('--font-scale',String(p.fontScale||1));r.setAttribute('data-font',p.fontFamily||'reem');r.setAttribute('data-theme','dark');}catch(e){}})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://res.cloudinary.com">
+<!-- reuse the LIVE site stylesheet so every game-card artwork renders identically -->
+<link rel="stylesheet" href="style.css?v=89">
+<style>
+  /* ---- hub-only overrides (this is a standalone preview page) ---- */
+  html, body { overflow-y: auto !important; height: auto !important; }
+  body { min-height: 100vh; }
+
+  .hub-top{
+    position: sticky; top: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    padding: .7rem clamp(1rem, 4vw, 2.4rem);
+    background: linear-gradient(180deg, rgba(6,13,24,.92), rgba(6,13,24,.55) 70%, transparent);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  }
+  .hub-logo{ font-size: 1.5rem; font-weight: 700; color: #E0C158; letter-spacing:.02em; }
+  .hub-logo small{ display:block; font-size:.6rem; letter-spacing:.35em; color:#8b93a6; font-weight:500; }
+  .hub-chips{ display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; }
+  .hub-chip{
+    display:inline-flex; align-items:center; gap:.35rem;
+    padding:.4rem .8rem; border-radius:999px; font-size:.82rem; font-weight:600;
+    background: rgba(201,162,39,.1); border:1px solid rgba(201,162,39,.35); color:#F5F1E8;
+  }
+  .hub-chip b{ color:#E0C158; }
+  .hub-date{ font-size:.85rem; color:#c7cede; }
+
+  .hub-wrap{ max-width: 1180px; margin: 0 auto; padding: 1.4rem clamp(1rem,4vw,2.4rem) 5rem; }
+
+  .hub-h{
+    display:flex; align-items:center; gap:.6rem;
+    font-size: clamp(1.15rem, 3vw, 1.5rem); color:#F5F1E8; margin: 2.4rem 0 1rem;
+  }
+  .hub-h::after{ content:""; flex:1; height:1px; background:linear-gradient(90deg, rgba(201,162,39,.4), transparent); }
+  .hub-h .em{ color:#C9A227; }
+
+  /* Featured لغز اليوم — reuse the site's featured look, compacted */
+  .hub-featured{
+    display:grid; grid-template-columns: 1.1fr .9fr; gap:1.4rem; align-items:center;
+    margin-top: .6rem; padding: clamp(1.1rem,3vw,2rem);
+    border-radius: 20px;
+    background: linear-gradient(150deg, rgba(20,34,58,.7), rgba(10,18,32,.7));
+    border:1px solid rgba(201,162,39,.28);
+    box-shadow: 0 20px 50px rgba(0,0,0,.35);
+  }
+  .hub-featured .issue-tag{
+    display:inline-block; font-size:.7rem; letter-spacing:.2em; color:#E0C158;
+    border:1px solid rgba(201,162,39,.4); border-radius:999px; padding:.3rem .8rem; margin-bottom:.9rem;
+  }
+  .hub-featured h2{ font-size: clamp(2rem,6vw,3.2rem); margin:.2rem 0 .5rem; color:#F5F1E8; }
+  .hub-featured .tag{ color:#c7cede; font-style:italic; margin:.2rem 0 1rem; line-height:1.8; }
+  .hub-featured .btn-primary{ margin-top:.4rem; }
+  @media (max-width: 720px){ .hub-featured{ grid-template-columns:1fr; } }
+
+  /* Leaderboard peek */
+  .hub-lb{ border-radius:16px; overflow:hidden; border:1px solid rgba(255,255,255,.08); background: rgba(10,18,32,.6); }
+  .hub-lb .row{ display:grid; grid-template-columns: 44px 1fr auto auto; gap:1rem; align-items:center;
+    padding:.8rem 1.1rem; border-bottom:1px solid rgba(255,255,255,.05); }
+  .hub-lb .row:last-child{ border-bottom:0; }
+  .hub-lb .rk{ width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:.9rem; }
+  .hub-lb .g{ background:linear-gradient(135deg,#C9A227,#E0C158); color:#0A1628; }
+  .hub-lb .s{ background:linear-gradient(135deg,#9aa3b2,#cfd6e2); color:#0A1628; }
+  .hub-lb .b{ background:linear-gradient(135deg,#b5713f,#d69a6a); color:#0A1628; }
+  .hub-lb .nm{ font-weight:600; color:#F5F1E8; }
+  .hub-lb .tm{ color:#9aa3b2; font-size:.85rem; }
+  .hub-lb .sc{ color:#E0C158; font-weight:700; }
+  .hub-lb .more{ display:block; text-align:center; padding:.8rem; color:#E0C158; font-weight:600; text-decoration:none; background:rgba(201,162,39,.06); }
+
+  /* compact daily strip spacing inside hub */
+  .hub-wrap .daily-strip{ margin: 0 0 1.2rem; }
+  .hub-note{ text-align:center; color:#7f8aa0; font-size:.8rem; margin-top:3rem; }
+</style>
+</head>
+<body class="merged-page-body">
+
+  <!-- background video (home clip) — same as the live site -->
+  <div class="video-container" id="video-container">
+    <video class="video-layer active" autoplay muted loop playsinline preload="auto">
+      <source src="https://res.cloudinary.com/dcgalovye/video/upload/f_auto,q_auto,w_1920/v1779870414/output_hboakw.mp4" type="video/mp4">
+    </video>
+    <div class="video-overlay"></div>
+  </div>
+
+  <!-- ===== Hub top bar: identity + today's context ===== -->
+  <header class="hub-top">
+    <div class="hub-logo">سُرى<small>لوحة اليوم</small></div>
+    <div class="hub-chips">
+      <span class="hub-date">السبت · 15 يوليو</span>
+      <span class="hub-chip">🔥 <b>7</b> أيام</span>
+      <span class="hub-chip">المستوى <b>1</b></span>
+    </div>
+  </header>
+
+  <main class="hub-wrap">
+
+    <!-- ===== لغز اليوم (Featured) ===== -->
+    <section class="hub-featured">
+      <div>
+        <span class="issue-tag">عدد اليوم · لغز الفجر</span>
+        <h2>كَلِمة</h2>
+        <p class="tag">"حين تتكشف الحروف، تنكشف معها لطائف اللغة."</p>
+        <p style="color:#c7cede;line-height:1.9;margin:0 0 1rem;">خمّن الكلمة العربية المخفية المكوّنة من 4 حروف في 6 محاولات. لغز يومي واحد للجميع.</p>
+        <button class="btn-primary">ابدأ الآن &larr;</button>
+      </div>
+      <div class="board-container texture-volcanic" style="border-radius:16px;">
+        <div class="wordle-vector large-preview">
+          <div class="w-row">
+            <div class="w-letter state-correct">س</div>
+            <div class="w-letter state-absent">ل</div>
+            <div class="w-letter state-present">ا</div>
+            <div class="w-letter state-absent">م</div>
+          </div>
+          <div class="w-row">
+            <div class="w-letter state-correct">س</div>
+            <div class="w-letter state-correct">ُ</div>
+            <div class="w-letter state-correct">r</div>
+            <div class="w-letter state-correct">ى</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== ألعاب اليوم ===== -->
+    <h2 class="hub-h">ألعاب <span class="em">اليوم</span></h2>
+
+    <div class="daily-strip" id="daily-strip">
+      <span class="combo-tracker">ألعاب اليوم: <b>0</b>/<span>9</span></span>
+      <span class="countdown-badge">لغز جديد بعد <span>07:12:44</span></span>
+      <span class="daily-goal">هدف اليوم: أكمل مستوى</span>
+    </div>
+
+    <div class="games-grid" id="games-grid">
+
+      <!-- كَلِمة (Wordle) -->
+      <div class="game-card active-card" data-category="words">
+        <div class="bracket top-left"></div><div class="bracket top-right"></div>
+        <div class="bracket bottom-left"></div><div class="bracket bottom-right"></div>
+        <div class="card-header-info"><span class="card-serial">12 . PL</span><span class="live-badge">العب الآن</span></div>
+        <div class="board-container texture-volcanic">
+          <div class="wordle-vector">
+            <div class="w-row"><div class="w-letter state-correct">س</div><div class="w-letter state-absent">ل</div><div class="w-letter state-present">ا</div><div class="w-letter state-absent">م</div></div>
+            <div class="w-row"><div class="w-letter state-correct">س</div><div class="w-letter state-correct">ُ</div><div class="w-letter state-correct">r</div><div class="w-letter state-correct">ى</div></div>
+          </div>
+        </div>
+        <div class="card-footer-info"><span class="card-texture">صخر بركاني · VOLCANIC</span></div>
+        <div class="game-info"><span class="game-english-title">ARABIC WORDLE</span><h3 class="game-arabic-title">كَلِمة</h3>
+          <p class="game-description">تحدي لغوي يومي. خمّن الكلمة السرية في ست محاولات.</p>
+          <button class="btn-play-now">ابدأ الآن</button></div>
+      </div>
+
+      <!-- تشابك (Connections) -->
+      <div class="game-card active-card" data-category="words">
+        <div class="bracket top-left"></div><div class="bracket top-right"></div>
+        <div class="bracket bottom-left"></div><div class="bracket bottom-right"></div>
+        <div class="card-header-info"><span class="card-serial">04 . PL</span><span class="live-badge">العب الآن</span></div>
+        <div class="board-container texture-sadu">
+          <div class="connections-vector">
+            <div class="conn-row"><div class="conn-block clr-orange">رمل</div><div class="conn-block clr-green">شمس</div><div class="conn-block clr-amber">قمر</div><div class="conn-block clr-purple">نجم</div></div>
+            <div class="conn-row"><div class="conn-block clr-green">صحراء</div><div class="conn-block clr-orange">بحر</div><div class="conn-block clr-purple">سماء</div><div class="conn-block clr-amber">أفق</div></div>
+            <div class="conn-row"><div class="conn-block clr-purple">شجر</div><div class="conn-block clr-amber">نبت</div><div class="conn-block clr-orange">زهر</div><div class="conn-block clr-green">نخل</div></div>
+            <div class="conn-row"><div class="conn-block clr-amber">ماء</div><div class="conn-block clr-purple">غيم</div><div class="conn-block clr-green">مطر</div><div class="conn-block clr-orange">ندى</div></div>
+          </div>
+        </div>
+        <div class="card-footer-info"><span class="card-texture">قماش السدو · SADU</span></div>
+        <div class="game-info"><span class="game-english-title">CONNECTIONS</span><h3 class="game-arabic-title">تشابك</h3>
+          <p class="game-description">اجمع الكلمات الأربع التي يربطها معنى مشترك.</p>
+          <button class="btn-play-now">ابدأ الآن</button></div>
+      </div>
+
+      <!-- نحلة الإملاء (Spelling Bee) -->
+      <div class="game-card active-card" data-category="words">
+        <div class="bracket top-left"></div><div class="bracket top-right"></div>
+        <div class="bracket bottom-left"></div><div class="bracket bottom-right"></div>
+        <div class="card-header-info"><span class="card-serial">07 . PL</span><span class="live-badge">العب الآن</span></div>
+        <div class="board-container texture-wax">
+          <div class="bee-vector">
+            <div class="honeycomb">
+              <div class="hex top-left"><span>أ</span></div><div class="hex top-right"><span>ل</span></div>
+              <div class="hex middle-left"><span>ن</span></div><div class="hex middle-center center"><span>م</span></div><div class="hex middle-right"><span>ت</span></div>
+              <div class="hex bottom-left"><span>ب</span></div><div class="hex bottom-right"><span>ي</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer-info"><span class="card-texture">شمع · WAX</span></div>
+        <div class="game-info"><span class="game-english-title">SPELLING BEE</span><h3 class="game-arabic-title">نحلة الإملاء</h3>
+          <p class="game-description">صغ أكبر عدد من الكلمات من سبعة حروف فقط.</p>
+          <button class="btn-play-now">ابدأ الآن</button></div>
+      </div>
+
+      <!-- خيوط (Strands) -->
+      <div class="game-card active-card" data-category="words">
+        <div class="bracket top-left"></div><div class="bracket top-right"></div>
+        <div class="bracket bottom-left"></div><div class="bracket bottom-right"></div>
+        <div class="card-header-info"><span class="card-serial">03 . PL</span><span class="live-badge">العب الآن</span></div>
+        <div class="board-container texture-palm">
+          <div class="strands-vector">
+            <svg class="strands-svg" viewBox="0 0 160 160">
+              <path d="M 40 40 L 80 40 C 100 40, 100 120, 120 120 L 80 120" fill="none" stroke="url(#gg)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="draw-line"/>
+              <defs><linearGradient id="gg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ff7e5f"/><stop offset="50%" stop-color="#feb47b"/><stop offset="100%" stop-color="#FFF1C5"/></linearGradient></defs>
+              <circle cx="40" cy="40" r="14" fill="#0f172a" stroke="#feb47b" stroke-width="1.5"/><text x="40" y="44" fill="#f8fafc" text-anchor="middle" font-size="12" font-weight="bold">خ</text>
+              <circle cx="80" cy="40" r="14" fill="#0f172a" stroke="#feb47b" stroke-width="1.5"/><text x="80" y="44" fill="#f8fafc" text-anchor="middle" font-size="12" font-weight="bold">ي</text>
+              <circle cx="80" cy="120" r="14" fill="#0f172a" stroke="#feb47b" stroke-width="1.5"/><text x="80" y="14" fill="#f8fafc" text-anchor="middle" font-size="12" font-weight="bold" transform="translate(0,110)">ط</text>
+              <circle cx="120" cy="120" r="14" fill="#0f172a" stroke="#feb47b" stroke-width="1.5"/><text x="120" y="14" fill="#f8fafc" text-anchor="middle" font-size="12" font-weight="bold" transform="translate(0,110)">و</text>
+              <circle cx="40" cy="120" r="12" fill="#0c111d" stroke="rgba(255,255,255,0.1)" stroke-width="1"/><circle cx="120" cy="40" r="12" fill="#0c111d" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+            </svg>
+          </div>
+        </div>
+        <div class="card-footer-info"><span class="card-texture">نخل · PALM</span></div>
+        <div class="game-info"><span class="game-english-title">STRANDS</span><h3 class="game-arabic-title">خيوط</h3>
+          <p class="game-description">اكتشف الكلمات المتصلة والمخفية على شبكة الحروف.</p>
+          <button class="btn-play-now">ابدأ الآن</button></div>
+      </div>
+
+      <!-- أمثال (Proverbs) -->
+      <div class="game-card active-card" data-category="words">
+        <div class="bracket top-left"></div><div class="bracket top-right"></div>
+        <div class="bracket bottom-left"></div><div class="bracket bottom-right"></div>
+        <div class="card-header-info"><span class="card-serial">09 . PR</span><span class="live-badge">العب الآن</span></div>
+        <div class="board-container texture-palm">
+          <div class="amthal-vector">
+            <span class="amthal-chip c1">المثل</span><span class="amthal-chip c2">رتّب</span><span class="amthal-chip c3">كلمات</span><span class="amthal-quote">”</span>
+          </div>
+        </div>
+        <div class="card-footer-info"><span class="card-texture">نخل · PALM</span></div>
+        <div class="game-info"><span class="game-english-title">AMTHAL</span><h3 class="game-arabic-title">أمثال</h3>
+          <p class="game-description">اكتب المثل الشعبي السعودي مسترشدًا بمعناه.</p>
+          <button class="btn-play-now">ابدأ الآن</button></div>
+      </div>
+
+      <!-- قرّبها (Warmer) -->
+      <div class="game-card active-card" data-category="words">
+        <div class="bracket top-left"></div><div class="bracket top-right"></div>
+        <div class="bracket bottom-left"></div><div class="bracket bottom-right"></div>
+        <div class="card-header-info"><span class="card-serial">14 . QB</span><span class="live-badge">العب الآن</span></div>
+        <div class="board-container texture-palm">
+          <div class="amthal-vector">
+            <span class="amthal-chip c1">خمّن</span><span class="amthal-chip c2">قرّب</span><span class="amthal-chip c3">🔥</span><span class="amthal-quote">”</span>
+          </div>
+        </div>
+        <div class="card-footer-info"><span class="card-texture">نخل · PALM</span></div>
+        <div class="game-info"><span class="game-english-title">WARMER</span><h3 class="game-arabic-title">قرّبها</h3>
+          <p class="game-description">خمّن الكلمة — كل تخمين يقول قد إيش قرّبت (🔥/❄️).</p>
+          <button class="btn-play-now">ابدأ الآن</button></div>
+      </div>
+
+      <!-- زليج (Tiles) -->
+      <div class="game-card active-card" data-category="numbers">
+        <div class="bracket top-left"></div><div class="bracket top-right"></div>
+        <div class="bracket bottom-left"></div><div class="bracket bottom-right"></div>
+        <div class="card-header-info"><span class="card-serial">05 . PL</span><span class="live-badge">العب الآن</span></div>
+        <div class="board-container texture-glazed">
+          <div class="tiles-vector">
+            <svg class="tiles-svg" viewBox="0 0 160 160">
+              <rect x="5" y="5" width="150" height="150" rx="12" fill="#2d1033" stroke="rgba(209,145,60,0.15)" stroke-width="1.5"/>
+              <polygon points="80,20 140,80 80,140 20,80" fill="none" stroke="#D1913C" stroke-width="1.5" stroke-dasharray="2,2"/>
+              <polygon points="80,35 125,80 80,125 35,80" fill="#4A154B" stroke="#FFF1C5" stroke-width="1"/>
+              <circle cx="80" cy="80" r="18" fill="#D1913C"/>
+              <polygon points="80,55 86,74 105,80 86,86 80,105 74,86 55,80 74,74" fill="#FFF1C5"/>
+              <circle cx="45" cy="45" r="4" fill="#feb47b"/><circle cx="115" cy="45" r="4" fill="#feb47b"/><circle cx="45" cy="115" r="4" fill="#feb47b"/><circle cx="115" cy="115" r="4" fill="#feb47b"/>
+            </svg>
+          </div>
+        </div>
+        <div class="card-footer-info"><span class="card-texture">بلاط مزجج · GLAZED</span></div>
+        <div class="game-info"><span class="game-english-title">TILES</span><h3 class="game-arabic-title">زليج</h3>
+          <p class="game-description">طابق البلاطات المزخرفة بنقوش أندلسية وأفرغ اللوحة.</p>
+          <button class="btn-play-now">ابدأ الآن</button></div>
+      </div>
+
+      <!-- صندوق الحروف (Letter Boxed) -->
+      <div class="game-card active-card" data-category="words">
+        <div class="bracket top-left"></div><div class="bracket top-right"></div>
+        <div class="bracket bottom-left"></div><div class="bracket bottom-right"></div>
+        <div class="card-header-info"><span class="card-serial">10 . PL</span><span class="live-badge">العب الآن</span></div>
+        <div class="board-container texture-brass">
+          <div class="letterboxed-vector">
+            <svg viewBox="0 0 160 160" class="boxed-svg">
+              <rect x="35" y="35" width="90" height="90" fill="none" stroke="#feb47b" stroke-width="1.5"/>
+              <path d="M 35 50 L 125 80 L 80 125 L 35 80 Z" fill="none" stroke="rgba(255,255,255,0.4)" stroke-dasharray="3,3" stroke-width="1"/>
+              <circle cx="50" cy="35" r="8" fill="#0f172a" stroke="#feb47b" stroke-width="1"/><text x="50" y="39" fill="#f8fafc" text-anchor="middle" font-size="9">ج</text>
+              <circle cx="80" cy="35" r="8" fill="#0f172a" stroke="#feb47b" stroke-width="1"/><text x="80" y="39" fill="#f8fafc" text-anchor="middle" font-size="9">د</text>
+              <circle cx="110" cy="35" r="8" fill="#0f172a" stroke="#feb47b" stroke-width="1"/><text x="110" y="39" fill="#f8fafc" text-anchor="middle" font-size="9">ر</text>
+              <circle cx="125" cy="50" r="8" fill="#0f172a" stroke="#feb47b" stroke-width="1"/><text x="125" y="54" fill="#f8fafc" text-anchor="middle" font-size="9">س</text>
+              <circle cx="125" cy="80" r="8" fill="#0f172a" stroke="#feb47b" stroke-width="1"/><text x="125" y="84" fill="#f8fafc" text-anchor="middle" font-size="9">ب</text>
+              <circle cx="125" cy="110" r="8" fill="#0f172a" stroke="#feb47b" stroke-width="1"/><text x="125" y="114" fill="#f8fafc" text-anchor="middle" font-size="9">ت</text>
+              <circle cx="50" cy="125" r="8" fill="#0f172a" stroke="#feb47b" stroke-width="1"/><text x="50" y="129" fill="#f8fafc" text-anchor="middle" font-size="9">م</text>
+              <circle cx="80" cy="125" r="8" fill="#0f172a" stroke="#feb47b" stroke-width="1"/><text x="80" y="129" fill="#f8fafc" text-anchor="middle" font-size="9">و</text>
+              <circle cx="110" cy="125" r="8" fill="#0f172a" stroke="#feb47b" stroke-width="1"/><text x="110" y="129" fill="#f8fafc" text-anchor="middle" font-size="9">ق</text>
+            </svg>
+          </div>
+        </div>
+        <div class="card-footer-info"><span class="card-texture">نحاس مطروق · BRASS</span></div>
+        <div class="game-info"><span class="game-english-title">LETTER BOXED</span><h3 class="game-arabic-title">صندوق الحروف</h3>
+          <p class="game-description">احبك الكلمات بين أضلاع المربع دون لمس أضلاع متجاورة.</p>
+          <button class="btn-play-now">ابدأ الآن</button></div>
+      </div>
+
+      <!-- نقاط (Pips) -->
+      <div class="game-card active-card" data-category="numbers">
+        <div class="bracket top-left"></div><div class="bracket top-right"></div>
+        <div class="bracket bottom-left"></div><div class="bracket bottom-right"></div>
+        <div class="card-header-info"><span class="card-serial">11 . PL</span><span class="live-badge">العب الآن</span></div>
+        <div class="board-container texture-ivory">
+          <div class="pips-vector">
+            <div class="domino-tile">
+              <div class="half-side"><span class="dot d-top-left"></span><span class="dot d-bottom-right"></span></div>
+              <div class="divider"></div>
+              <div class="half-side"><span class="dot d-center"></span></div>
+            </div>
+            <div class="domino-tile vertical">
+              <div class="half-side"><span class="dot d-top-left"></span><span class="dot d-top-right"></span><span class="dot d-bottom-left"></span><span class="dot d-bottom-right"></span></div>
+              <div class="divider"></div>
+              <div class="half-side"><span class="dot d-center"></span></div>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer-info"><span class="card-texture">عاج · IVORY</span></div>
+        <div class="game-info"><span class="game-english-title">PIPS</span><h3 class="game-arabic-title">نقاط</h3>
+          <p class="game-description">رتب أحجار الدومينو في تطابقات التوازن والجمع.</p>
+          <button class="btn-play-now">ابدأ الآن</button></div>
+      </div>
+
+    </div>
+
+    <!-- ===== فرسان سُرى (Leaderboard peek) ===== -->
+    <h2 class="hub-h">فرسان <span class="em">سُرى</span></h2>
+    <div class="hub-lb">
+      <div class="row"><span class="rk g">1</span><span class="nm">عبدالرحمن بن خالد</span><span class="tm">0:42</span><span class="sc">1,250</span></div>
+      <div class="row"><span class="rk s">2</span><span class="nm">أروى التميمي</span><span class="tm">0:51</span><span class="sc">1,180</span></div>
+      <div class="row"><span class="rk b">3</span><span class="nm">فيصل اليوسف</span><span class="tm">0:59</span><span class="sc">1,120</span></div>
+      <a href="#" class="more">عرض لوحة الصدارة كاملة ←</a>
+    </div>
+
+    <p class="hub-note">معاينة «لوحة اليوم» — نفس فنّ الموقع الحالي، مُعاد تركيبه في شاشة واحدة. الأزرار للعرض فقط في هذي المعاينة.</p>
+
+  </main>
+</body>
+</html>

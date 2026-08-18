@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<!-- «الخصوصيّة» — وثيقةٌ قانونيّةٌ لا صفحةُ تسويق.
+     كلُّ سطرٍ فيها مقروءٌ من الشيفرة لا مكتوبٌ من العادة: أسماءُ الحقول من
+     `initAnalytics` في src/main.js، والأطرافُ الخارجيّة من `_headers` و
+     `supabase/functions/`. إن تغيّر ما يُجمَع فهذا الملفّ يتغيّر معه، وإلّا
+     صارت الوثيقةُ كذبًا موقّعًا.
+
+     وهي **قائمةٌ بذاتها** كـ404: لا style.css ولا app.js. من يقرأ سياسةً
+     لا ينبغي أن يُحمَّل ٦٥٠ كيلوبايت من لعبة. -->
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سياسة الخصوصيّة — سُرى</title>
+<meta name="description" content="ما تجمعه سُرى، ولماذا، ومع من تشاركه — ومتى لا تجمع شيئًا.">
+<meta name="theme-color" content="#050a14">
+<link rel="icon" type="image/png" sizes="32x32" href="/public/brand/icon-32.png">
+<meta property="og:title" content="سياسة الخصوصيّة — سُرى">
+<meta property="og:description" content="ما تجمعه سُرى، ولماذا، ومع من تشاركه.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* التوكنز المستعملة هنا وحدها، منقولةً من style.css لا مستوردةً منه — وهو
+   ثمنُ الاستقلال نفسُه الذي دفعته 404.html. */
+:root {
+    --ink-1: #EAE3D8;
+    --ink-2: #C8BFB2;
+    --ink-3: #8C8579;
+    --gold:  #C9A227;
+    --night: #050a14;
+    --panel: #0b1220;
+    --line:  rgba(201, 162, 39, 0.22);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+    margin: 0;
+    background: var(--night);
+    color: var(--ink-1);
+    font-family: "Reem Kufi", "Segoe UI", system-ui, sans-serif;
+    /* letter-spacing: normal على العربيّ قرارٌ ثابت في هذا المشروع، لا سهو */
+    letter-spacing: normal;
+    line-height: 1.95;
+    font-size: 17px;
+    -webkit-text-size-adjust: 100%;
+}
+a { color: var(--gold); text-decoration-thickness: 1px; text-underline-offset: 4px; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+.wrap { max-width: 760px; margin: 0 auto; padding: 3rem 1.25rem 5rem; }
+
+/* ---- الترويسة --------------------------------------------------------- */
+.top { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 2.5rem; }
+.back { font-size: 0.95rem; color: var(--ink-2); text-decoration: none; }
+.back:hover { color: var(--gold); }
+.mark { font-size: 1.15rem; color: var(--gold); font-weight: 600; }
+
+h1 { font-size: clamp(1.9rem, 6vw, 2.6rem); margin: 0 0 0.4rem; line-height: 1.4; }
+.sub { color: var(--ink-3); margin: 0 0 0.6rem; font-size: 0.95rem; }
+.lede {
+    color: var(--ink-2); border-inline-start: 2px solid var(--line);
+    padding-inline-start: 1rem; margin: 2rem 0 2.5rem;
+}
+
+h2 {
+    font-size: 1.25rem; margin: 3rem 0 0.75rem; color: var(--gold);
+    border-bottom: 1px solid var(--line); padding-bottom: 0.5rem;
+}
+h3 { font-size: 1.02rem; margin: 1.75rem 0 0.4rem; color: var(--ink-1); }
+p, li { color: var(--ink-2); }
+ul { padding-inline-start: 1.35rem; margin: 0.5rem 0; }
+li { margin-bottom: 0.45rem; }
+code {
+    font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+    font-size: 0.88em; color: var(--ink-1);
+    background: rgba(255,255,255,0.06); padding: 0.1em 0.4em; border-radius: 4px;
+    direction: ltr; display: inline-block;
+}
+
+/* ---- الجداول: تُمرَّر أفقيًّا على الجوّال ولا تكسر الصفحة ---------------- */
+.tablewrap { overflow-x: auto; margin: 1rem 0; border: 1px solid var(--line); border-radius: 10px; }
+table { border-collapse: collapse; width: 100%; min-width: 460px; font-size: 0.93rem; }
+th, td { text-align: start; padding: 0.7rem 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.06); }
+th { color: var(--gold); font-weight: 500; background: rgba(255,255,255,0.03); }
+tr:last-child td { border-bottom: 0; }
+
+.note {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+    padding: 1rem 1.15rem; margin: 1.25rem 0; font-size: 0.95rem;
+}
+.note strong { color: var(--ink-1); }
+
+/* ---- التذييل: نسبةُ الموقع إلى صاحبه ---------------------------------- */
+/* الشارةُ نفسُها المستعملة في تذييل الموقع: أزرقُ لِنكدإن الرسميّ في السكون،
+   وينقلب المِلءُ واللونُ عند اللمس. علامةٌ تجاريّةٌ لا تُصبَغ بذهب الموقع. */
+.credit { margin-top: 4rem; padding-top: 1.75rem; border-top: 1px solid var(--line); }
+.in-badge {
+    --in-blue: #0A66C2;
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.42rem 0.85rem 0.42rem 0.7rem;
+    border: 1px solid rgba(10, 102, 194, 0.42); border-radius: 8px;
+    background: rgba(10, 102, 194, 0.08);
+    color: var(--in-blue); font-size: 0.88rem; line-height: 1; text-decoration: none;
+    transition: background-color 0.14s ease, border-color 0.14s ease, color 0.14s ease;
+}
+.in-badge svg { width: 17px; height: 17px; fill: currentColor; flex: none; }
+.in-badge:hover, .in-badge:focus-visible {
+    background: var(--in-blue); border-color: var(--in-blue); color: #fff;
+}
+@media (prefers-reduced-motion: reduce) { .in-badge { transition: none; } }
+
+@media (max-width: 480px) {
+    body { font-size: 16px; line-height: 1.85; }
+    .wrap { padding: 2rem 1rem 4rem; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+    <div class="top">
+        <a class="back" href="/">&rarr; عودة إلى سُرى</a>
+        <span class="mark">سُرى</span>
+    </div>
+
+    <h1>سياسة الخصوصيّة</h1>
+    <p class="sub">آخر تحديث: ١٥ أغسطس ٢٠٢٦</p>
+
+    <p class="lede">
+        سُرى ألعابُ كلماتٍ عربيّة. لا نبيع بياناتك، ولا نضع إعلانات، ولا نستعمل
+        أدوات تتبّعٍ إعلانيّة. وما نجمعه مذكورٌ هنا كاملًا باسم الحقل نفسه —
+        لا بعبارةٍ عامّة تُخفيه.
+    </p>
+
+    <h2>١. من يشغّل الموقع</h2>
+    <p>
+        سُرى مشروعٌ فرديّ يملكه ويشغّله <strong>خالد عبدالله الزاحم</strong>.
+        للتواصل في أيّ أمرٍ يخصّ خصوصيّتك أو بياناتك:
+        <a href="mailto:khalid.alzahem@gmail.com">khalid.alzahem@gmail.com</a>.
+    </p>
+
+    <h2>٢. ما نجمعه</h2>
+
+    <h3>أ) إن لعبتَ بلا حساب</h3>
+    <p>
+        يُنشئ متصفّحك معرِّفًا عشوائيًّا يُحفَظ عندك في <code>localStorage</code>
+        باسم <code>sura.device_id</code>. ليس اسمًا ولا بريدًا ولا رقمًا يعود
+        إليك: عددٌ عشوائيّ يميّز متصفّحًا عن آخر كي لا تُحسَب زيارتُك مرّتين.
+        ومعه نسجّل أحداث اللعب:
+    </p>
+    <ul>
+        <li>نوع اللعبة ورقم المستوى،</li>
+        <li>ما حدث: فتحٌ، بدايةٌ، إتمامٌ، تركٌ، استعمالُ تلميح، مشاركة،</li>
+        <li>وقتُ الحدث، ومعرِّفُ جلسةٍ يُمحى بإغلاق التبويب.</li>
+    </ul>
+    <p>
+        ومسحُ بيانات الموقع من متصفّحك يمحو هذا المعرِّف، فتصير جهازًا جديدًا
+        بالنسبة إلينا.
+    </p>
+
+    <h3>ب) إن أنشأتَ حسابًا</h3>
+    <ul>
+        <li><strong>بريدك الإلكترونيّ</strong> وكلمةُ مرورٍ مُعمّاة — لا نراها نحن ولا نخزّنها كنصّ.</li>
+        <li>إن دخلتَ عبر Google: بريدُك واسمُك المعروض وصورتُك من حساب Google.</li>
+        <li>تقدّمُك: المستويات التي أنهيتَها، نقاطُك، سلسلتُك اليوميّة، وترتيبُك.</li>
+    </ul>
+
+    <h3>ج) إن أرسلتَ بلاغًا أو اقتراحًا أو تقييمًا</h3>
+    <ul>
+        <li>النصّ الذي كتبتَه، واللعبة التي يخصّها.</li>
+        <li>الصورة إن أرفقتَها — وهي تصل إلى المشغّل عبر تلغرام لقراءة البلاغ.
+            <strong>لا ترفع صورةً فيها ما لا تريد أن يُقرأ.</strong></li>
+        <li>تقييمُك بالنجوم وحكمُك على الصعوبة، إن اخترتَ إضافتهما.</li>
+    </ul>
+
+    <h3>د) «اكتب بصوتك»</h3>
+    <div class="note">
+        <strong>هذا الزرّ وحدَه يخرج عن قاعدة «لا شيء يغادر جهازك».</strong>
+        زرّ الإملاء في نموذج البلاغ يستعمل خدمةَ التعرّف على الكلام المدمجة في
+        متصفّحك (<code>SpeechRecognition</code>). وفي Chrome وEdge وSafari تُرسَل
+        نبرةُ صوتك إلى خوادم صانع المتصفّح — لا إلى خوادمنا — لتحويلها نصًّا،
+        وتخضع لسياسة خصوصيّة ذلك المتصفّح لا لسياستنا. نحن لا نستلم إلّا النصّ
+        الناتج بعد أن تضغط «إرسال». والزرّ اختياريّ بالكامل: الكتابة باليد تؤدّي
+        الغرض نفسَه.
+    </div>
+
+    <h2>٣. ما لا نجمعه</h2>
+    <ul>
+        <li>لا موقعًا جغرافيًّا، ولا وصولًا إلى الكاميرا أو جهات الاتّصال أو ملفّاتك.</li>
+        <li>لا كوكيز إعلانيّة، ولا بكسل تتبّعٍ من فيسبوك أو غيره، ولا Google Analytics.</li>
+        <li>لا نبيع بياناتك ولا نؤجّرها ولا نشاركها مع وسطاء بيانات — لا مقابل مالٍ ولا مجّانًا.</li>
+    </ul>
+    <p>
+        وحسابُك لا يحتاج اسمًا حقيقيًّا ولا رقمَ هاتفٍ ولا تاريخَ ميلاد. ولستَ
+        مضطرًّا إلى حسابٍ أصلًا: كلُّ الألعاب تُلعَب بلا تسجيل.
+    </p>
+
+    <h2>٤. لماذا نجمع ما نجمع</h2>
+    <div class="tablewrap">
+    <table>
+        <thead><tr><th>البيان</th><th>الغرض</th><th>الأساس</th></tr></thead>
+        <tbody>
+            <tr><td>أحداث اللعب</td><td>معرفةُ المستويات التي تُتعِب الناس فتُعدَّل</td><td>مصلحةٌ مشروعة</td></tr>
+            <tr><td>البريد الإلكترونيّ</td><td>تسجيلُ الدخول واستعادةُ الحساب</td><td>تنفيذُ الخدمة</td></tr>
+            <tr><td>التقدّم والنقاط</td><td>حفظُ مستواك وترتيبُ اللوحة</td><td>تنفيذُ الخدمة</td></tr>
+            <tr><td>البلاغات والتقييمات</td><td>إصلاحُ الأعطال وتحسينُ الألعاب</td><td>موافقتُك بالإرسال</td></tr>
+        </tbody>
+    </table>
+    </div>
+
+    <h2>٥. مع من تُشارَك</h2>
+    <p>لا نشارك بياناتك مع أحدٍ إلّا مزوّدي الخدمة الذين يشغّلون الموقع فعليًّا:</p>
+    <div class="tablewrap">
+    <table>
+        <thead><tr><th>الطرف</th><th>دورُه</th><th>ما يصله</th></tr></thead>
+        <tbody>
+            <tr><td>Supabase</td><td>قاعدةُ البيانات وتسجيلُ الدخول</td><td>حسابُك وتقدّمُك وأحداثُ اللعب</td></tr>
+            <tr><td>Cloudflare</td><td>استضافةُ الصفحات وتوزيعُها</td><td>عنوانُ IP وطلباتُ التصفّح (سجلّاتٌ تقنيّة)</td></tr>
+            <tr><td>Cloudinary</td><td>الصور والمقاطع</td><td>طلبُ الملفّ وحدَه</td></tr>
+            <tr><td>Google Fonts &middot; jsDelivr</td><td>الخطوط ومكتبةُ الاتّصال</td><td>طلبُ الملفّ وحدَه</td></tr>
+            <tr><td>Groq</td><td>صياغةُ التلميحات ومراجعةُ المحتوى</td><td>حالةُ اللوح فقط — لا هويّتك ولا بريدك</td></tr>
+            <tr><td>Resend</td><td>رسائلُ تأكيد البريد واستعادةِ كلمة المرور</td><td>بريدُك</td></tr>
+            <tr><td>Telegram</td><td>وصولُ البلاغات إلى المشغّل</td><td>نصُّ بلاغك وصورتُه إن أرفقتَها</td></tr>
+        </tbody>
+    </table>
+    </div>
+    <p>
+        ونكشف البيانات فوق ذلك في حالةٍ واحدة: طلبٌ نظاميّ مُلزِمٌ من جهةٍ
+        مختصّة. وإن حدث، وكان النظام يسمح بإخبارك، أخبرناك.
+    </p>
+
+    <h2>٦. أين تُحفَظ وكم تبقى</h2>
+    <ul>
+        <li>بياناتُ الحساب والتقدّم تبقى ما دام حسابُك قائمًا، وتُحذف بحذفه.</li>
+        <li>أحداثُ اللعب المجهولة تُحفَظ للتحليل، وليست مرتبطةً باسمٍ ولا بريد.</li>
+        <li>البلاغاتُ تبقى حتى يُغلَق البلاغ ثمّ تُحذف عند التنظيف الدوريّ.</li>
+        <li>الخوادمُ خارج المملكة (Supabase وCloudflare)، فبياناتُك تُعالَج دوليًّا.</li>
+    </ul>
+
+    <h2>٧. حقوقك</h2>
+    <p>
+        اكتب إلى <a href="mailto:khalid.alzahem@gmail.com">khalid.alzahem@gmail.com</a> من
+        البريد المسجَّل في حسابك، وتُنفَّذ خلال ثلاثين يومًا:
+    </p>
+    <ul>
+        <li><strong>نسخةٌ من بياناتك</strong> كما هي عندنا.</li>
+        <li><strong>تصحيحُ</strong> ما هو خطأ.</li>
+        <li><strong>حذفُ حسابك</strong> وكلِّ ما يرتبط به.</li>
+        <li><strong>الاعتراضُ</strong> على جمع أحداث اللعب — وتُوقَف عنك.</li>
+    </ul>
+    <p>
+        ويمكنك دائمًا أن تفعل بنفسك ما لا يحتاج إذنَنا: امسح بياناتِ الموقع من
+        متصفّحك فيزول معرِّفُ جهازك وكلُّ تقدّمك المحفوظ محلّيًّا.
+    </p>
+
+    <h2>٨. الأطفال</h2>
+    <p>
+        سُرى مناسبةٌ لكلّ الأعمار، ولا نطلب عمرَ أحد. ولا نجمع عن قصدٍ بياناتِ
+        من هم دون الثالثة عشرة. وإن كنتَ وليَّ أمرٍ ووجدتَ حسابًا لطفلك، راسِلنا
+        ونحذفه.
+    </p>
+
+    <h2>٩. الأمان</h2>
+    <ul>
+        <li>كلُّ اتّصالٍ بالموقع مُعمًّى بـHTTPS إلزامًا.</li>
+        <li>كلماتُ المرور مُعمّاة عند Supabase — لا تُخزَّن كنصٍّ ولا نراها.</li>
+        <li>قاعدةُ البيانات محميّةٌ بحمايةٍ على مستوى الصفّ: لا يقرأ لاعبٌ صفَّ لاعبٍ آخر.</li>
+    </ul>
+    <p>
+        ولا نَعِدُك بأمانٍ مطلق — لا أحد يستطيع ذلك صادقًا. لكنّ ما سبق مُطبَّقٌ
+        فعلًا لا موعود.
+    </p>
+
+    <h2>١٠. تغييرُ هذه السياسة</h2>
+    <p>
+        إن تغيّر ما نجمعه تغيّر هذا النصّ وتاريخُ التحديث في أعلاه. وإن كان
+        التغيير جوهريًّا، أعلنّاه في الموقع نفسِه لا في هذه الصفحة وحدَها.
+    </p>
+
+    <footer class="credit">
+        <a class="in-badge" href="https://www.linkedin.com/in/khalidabdullahalzahem"
+           target="_blank" rel="noopener noreferrer"
+           aria-label="خالد عبدالله الزاحم على LinkedIn">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.05c.53-.95 1.83-1.95 3.76-1.95C20.3 8.75 21 11 21 14.1V21h-4v-6.1c0-1.46-.03-3.35-2.04-3.35-2.04 0-2.36 1.6-2.36 3.25V21H9z"/></svg>
+            <span>LinkedIn</span>
+        </a>
+    </footer>
+
+</div>
+</body>
+</html>
